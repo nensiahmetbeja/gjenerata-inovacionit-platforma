@@ -62,13 +62,17 @@ export default function AdminLogin() {
         return;
       }
 
-      // Success - redirect to admin dashboard
+      // Success - redirect based on role
       toast({
         title: "Mirë se erdhe!",
         description: "Jeni futur me sukses si administrator.",
       });
       
-      navigate('/admin/dashboard');
+      if (profile.role === 'ekzekutiv') {
+        navigate('/admin/dashboard-ekzekutiv');
+      } else if (profile.role === 'ekspert') {
+        navigate('/admin/dashboard-ekspert');
+      }
     } catch (err) {
       setError('Qasja e kufizuar: Ky përdorues nuk ka të drejta administrimi.');
     } finally {
