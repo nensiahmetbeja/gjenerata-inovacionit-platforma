@@ -12,10 +12,10 @@ All colors MUST be HSL.
     --background: 50 100% 98%; /* #fffef9 - warm neutral base */
     --foreground: 232 11% 13%; /* #1d1e22 - typography base */
 
-    --card: 40 50% 99%; /* #fdfdfc - surface */
+    --card: 0 0% 100%; /* pure white surface */
     --card-foreground: 232 11% 13%;
 
-    --popover: 40 50% 99%;
+    --popover: 0 0% 100%;
     --popover-foreground: 232 11% 13%;
 
     --primary: 218 63% 21%; /* #142657 - institutional blue */
