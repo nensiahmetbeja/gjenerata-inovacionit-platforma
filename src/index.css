@@ -8,89 +8,85 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Modern Institutional Design System */
+    --background: 50 100% 98%; /* #fffef9 - warm neutral base */
+    --foreground: 232 11% 13%; /* #1d1e22 - typography base */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 40 50% 99%; /* #fdfdfc - surface */
+    --card-foreground: 232 11% 13%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 40 50% 99%;
+    --popover-foreground: 232 11% 13%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 218 63% 21%; /* #142657 - institutional blue */
+    --primary-foreground: 50 100% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 218 20% 92%; /* light blue for secondary elements */
+    --secondary-foreground: 218 63% 21%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 218 15% 95%; /* subtle background variations */
+    --muted-foreground: 218 25% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 44 69% 52%; /* #d4af37 - polished gold */
+    --accent-foreground: 232 11% 13%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 50 100% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 218 25% 88%; /* soft borders matching institutional theme */
+    --input: 218 25% 92%;
+    --ring: 44 69% 52%; /* gold focus rings for accessibility */
 
-    --radius: 0.5rem;
+    --radius: 0.75rem; /* modern rounded corners */
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 218 63% 21%; /* institutional blue sidebar */
+    --sidebar-foreground: 50 100% 98%;
+    --sidebar-primary: 44 69% 52%; /* gold for active items */
+    --sidebar-primary-foreground: 232 11% 13%;
+    --sidebar-accent: 218 40% 30%; /* darker blue for hover */
+    --sidebar-accent-foreground: 50 100% 98%;
+    --sidebar-border: 218 40% 30%;
+    --sidebar-ring: 44 69% 52%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark mode institutional theme */
+    --background: 218 50% 8%; /* dark blue background */
+    --foreground: 50 100% 98%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 218 40% 12%;
+    --card-foreground: 50 100% 98%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 218 40% 12%;
+    --popover-foreground: 50 100% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 44 69% 52%; /* gold as primary in dark mode */
+    --primary-foreground: 218 50% 8%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 218 30% 20%;
+    --secondary-foreground: 50 100% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 218 25% 15%;
+    --muted-foreground: 218 15% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 218 63% 21%; /* blue as accent in dark mode */
+    --accent-foreground: 50 100% 98%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 45%;
+    --destructive-foreground: 50 100% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 218 25% 25%;
+    --input: 218 25% 20%;
+    --ring: 44 69% 52%;
+    
+    --sidebar-background: 218 60% 6%; /* darker blue for sidebar */
+    --sidebar-foreground: 50 100% 98%;
+    --sidebar-primary: 44 69% 52%;
+    --sidebar-primary-foreground: 218 50% 8%;
+    --sidebar-accent: 218 40% 15%;
+    --sidebar-accent-foreground: 50 100% 98%;
+    --sidebar-border: 218 40% 15%;
+    --sidebar-ring: 44 69% 52%;
   }
 }
 
@@ -100,6 +96,90 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "liga" 1, "kern" 1;
+  }
+
+  /* Modern Institutional Typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight text-foreground;
+    line-height: 1.2;
+  }
+
+  h1 { @apply text-3xl md:text-4xl; }
+  h2 { @apply text-2xl md:text-3xl; }
+  h3 { @apply text-xl md:text-2xl; }
+  h4 { @apply text-lg md:text-xl; }
+
+  /* Enhanced Focus States for Accessibility */
+  *:focus-visible {
+    @apply ring-2 ring-ring ring-offset-2 ring-offset-background outline-none;
+  }
+}
+
+@layer components {
+  /* Modern Institutional Card Styling */
+  .institutional-card {
+    @apply bg-card border border-border rounded-xl p-6 shadow-sm;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .institutional-card:hover {
+    @apply shadow-md;
+    transform: translateY(-1px);
+  }
+
+  /* Status Badge Styling */
+  .status-badge {
+    @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium;
+    transition: all 0.2s ease;
+  }
+
+  .status-badge.status-ri {
+    @apply bg-accent/10 text-accent border border-accent/20;
+  }
+
+  .status-badge.status-shqyrtim {
+    @apply bg-primary/10 text-primary border border-primary/20;
+  }
+
+  .status-badge.status-miratuar {
+    @apply bg-green-100 text-green-700 border border-green-200;
+  }
+
+  /* Navigation Styling */
+  .nav-item-active {
+    @apply bg-sidebar-primary text-sidebar-primary-foreground font-medium;
+    box-shadow: 0 0 0 2px hsl(var(--accent) / 0.2);
+  }
+
+  /* Modern Button Enhancements */
+  .btn-institutional {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  }
+
+  .btn-institutional:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+
+  /* Table Styling */
+  .institutional-table {
+    @apply w-full border-collapse;
+  }
+
+  .institutional-table th {
+    @apply bg-primary text-primary-foreground px-4 py-3 text-left font-medium text-sm;
+    border-bottom: 2px solid hsl(var(--accent));
+  }
+
+  .institutional-table td {
+    @apply px-4 py-3 border-b border-border;
+  }
+
+  .institutional-table tr:hover {
+    @apply bg-muted/50;
   }
 }
