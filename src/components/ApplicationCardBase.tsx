@@ -100,21 +100,31 @@ export default function ApplicationCardBase({
     const fetchComments = async () => {
       if (!commentPermissions.canView) return;
       
-      const { data, error } = await supabase
+      const { data: notesData, error } = await supabase
         .from('application_notes' as any)
-        .select(`
-          *,
-          profiles!created_by (
-            emri,
-            mbiemri
-          )
-        `)
+        .select('*')
         .eq('application_id', application.id)
         .order('created_at', { ascending: false });
-      
-      if (!error && data) {
-        setComments(data as unknown as ApplicationNote[]);
-      }
+
+      if (error) throw error;
+
+      // Fetch profiles for each note separately
+      const commentsWithProfiles = await Promise.all(
+        (notesData || []).map(async (note: any) => {
+          if (note.created_by) {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('emri, mbiemri')
+              .eq('id', note.created_by)
+              .single();
+            
+            return { ...note, profiles: profile };
+          }
+          return { ...note, profiles: null };
+        })
+      );
+
+      setComments(commentsWithProfiles as unknown as ApplicationNote[]);
     };
     fetchComments();
   }, [application.id, commentPermissions.canView]);
@@ -208,21 +218,29 @@ export default function ApplicationCardBase({
         description: "Komenti u shtua me sukses"
       });
 
-      // Refresh comments
-      const { data, error: fetchError } = await supabase
+      // Refresh comments  
+      const { data: notesData, error: fetchError } = await supabase
         .from('application_notes' as any)
-        .select(`
-          *,
-          profiles!created_by (
-            emri,
-            mbiemri
-          )
-        `)
+        .select('*')
         .eq('application_id', application.id)
         .order('created_at', { ascending: false });
       
-      if (!fetchError && data) {
-        setComments(data as unknown as ApplicationNote[]);
+      if (!fetchError && notesData) {
+        const commentsWithProfiles = await Promise.all(
+          notesData.map(async (note: any) => {
+            if (note.created_by) {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('emri, mbiemri')
+                .eq('id', note.created_by)
+                .single();
+              
+              return { ...note, profiles: profile };
+            }
+            return { ...note, profiles: null };
+          })
+        );
+        setComments(commentsWithProfiles as unknown as ApplicationNote[]);
       }
     } catch (error) {
       console.error('Error adding comment:', error);
@@ -256,20 +274,28 @@ export default function ApplicationCardBase({
       });
 
       // Refresh comments
-      const { data, error: fetchError } = await supabase
+      const { data: notesData, error: fetchError } = await supabase
         .from('application_notes' as any)
-        .select(`
-          *,
-          profiles!created_by (
-            emri,
-            mbiemri
-          )
-        `)
+        .select('*')
         .eq('application_id', application.id)
         .order('created_at', { ascending: false });
       
-      if (!fetchError && data) {
-        setComments(data as unknown as ApplicationNote[]);
+      if (!fetchError && notesData) {
+        const commentsWithProfiles = await Promise.all(
+          notesData.map(async (note: any) => {
+            if (note.created_by) {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('emri, mbiemri')
+                .eq('id', note.created_by)
+                .single();
+              
+              return { ...note, profiles: profile };
+            }
+            return { ...note, profiles: null };
+          })
+        );
+        setComments(commentsWithProfiles as unknown as ApplicationNote[]);
       }
     } catch (error) {
       console.error('Error updating comment:', error);
@@ -296,20 +322,28 @@ export default function ApplicationCardBase({
       });
 
       // Refresh comments
-      const { data, error: fetchError } = await supabase
+      const { data: notesData, error: fetchError } = await supabase
         .from('application_notes' as any)
-        .select(`
-          *,
-          profiles!created_by (
-            emri,
-            mbiemri
-          )
-        `)
+        .select('*')
         .eq('application_id', application.id)
         .order('created_at', { ascending: false });
       
-      if (!fetchError && data) {
-        setComments(data as unknown as ApplicationNote[]);
+      if (!fetchError && notesData) {
+        const commentsWithProfiles = await Promise.all(
+          notesData.map(async (note: any) => {
+            if (note.created_by) {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('emri, mbiemri')
+                .eq('id', note.created_by)
+                .single();
+              
+              return { ...note, profiles: profile };
+            }
+            return { ...note, profiles: null };
+          })
+        );
+        setComments(commentsWithProfiles as unknown as ApplicationNote[]);
       }
     } catch (error) {
       console.error('Error deleting comment:', error);
