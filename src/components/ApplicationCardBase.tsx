@@ -103,13 +103,11 @@ export default function ApplicationCardBase({
       const { data, error } = await supabase
         .from('application_notes' as any)
         .select(`
-          id,
-          content,
-          note_type,
-          role,
-          created_by,
-          created_at,
-          profiles!created_by(emri, mbiemri)
+          *,
+          profiles!created_by (
+            emri,
+            mbiemri
+          )
         `)
         .eq('application_id', application.id)
         .order('created_at', { ascending: false });
@@ -214,13 +212,11 @@ export default function ApplicationCardBase({
       const { data, error: fetchError } = await supabase
         .from('application_notes' as any)
         .select(`
-          id,
-          content,
-          note_type,
-          role,
-          created_by,
-          created_at,
-          profiles!created_by(emri, mbiemri)
+          *,
+          profiles!created_by (
+            emri,
+            mbiemri
+          )
         `)
         .eq('application_id', application.id)
         .order('created_at', { ascending: false });
@@ -263,13 +259,11 @@ export default function ApplicationCardBase({
       const { data, error: fetchError } = await supabase
         .from('application_notes' as any)
         .select(`
-          id,
-          content,
-          note_type,
-          role,
-          created_by,
-          created_at,
-          profiles!created_by(emri, mbiemri)
+          *,
+          profiles!created_by (
+            emri,
+            mbiemri
+          )
         `)
         .eq('application_id', application.id)
         .order('created_at', { ascending: false });
@@ -305,13 +299,11 @@ export default function ApplicationCardBase({
       const { data, error: fetchError } = await supabase
         .from('application_notes' as any)
         .select(`
-          id,
-          content,
-          note_type,
-          role,
-          created_by,
-          created_at,
-          profiles!created_by(emri, mbiemri)
+          *,
+          profiles!created_by (
+            emri,
+            mbiemri
+          )
         `)
         .eq('application_id', application.id)
         .order('created_at', { ascending: false });
