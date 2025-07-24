@@ -122,7 +122,7 @@ export default function AdminAplikimet() {
           fusha:fusha_id (label),
           bashkia:bashkia_id (label),
           status:status_id (label),
-          assigned_ekspert:assigned_ekspert_id (emri, mbiemri)
+          assigned_ekspert:profiles!assigned_ekspert_id (emri, mbiemri)
         `)
         .order('created_at', { ascending: false });
 
@@ -147,7 +147,7 @@ export default function AdminAplikimet() {
           fusha:fusha_id (label),
           bashkia:bashkia_id (label),
           status:status_id (label),
-          assigned_ekspert:assigned_ekspert_id (emri, mbiemri)
+          assigned_ekspert:profiles!assigned_ekspert_id (emri, mbiemri)
         `)
         .eq('assigned_ekspert_id', user.id)
         .order('created_at', { ascending: false });
