@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, FileText, User } from "lucide-react";
+import { ExternalLink, FileText, User, Download } from "lucide-react";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from "@/hooks/use-toast";
@@ -246,6 +246,38 @@ export default function ApplicationCardBase({
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
+  const handleDocumentDownload = async (document: any) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from('applications')
+        .download(document.path);
+
+      if (error) throw error;
+
+      // Create a blob URL and trigger download
+      const url = URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = document.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: "Dokumenti u shkarkua",
+        description: `${document.name} u shkarkua me sukses.`
+      });
+    } catch (error) {
+      console.error('Error downloading document:', error);
+      toast({
+        title: "Gabim gjatë shkarkimit",
+        description: "Ka ndodhur një gabim gjatë shkarkimit të dokumentit.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -301,6 +333,14 @@ export default function ApplicationCardBase({
                       <p className="text-sm font-medium truncate">{doc.name}</p>
                       <p className="text-xs text-muted-foreground">{formatFileSize(doc.size)}</p>
                     </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleDocumentDownload(doc)}
+                      className="shrink-0"
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
                   </div>
                 ))}
               </div>
