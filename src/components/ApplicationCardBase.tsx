@@ -107,7 +107,7 @@ export default function ApplicationCardBase({
           role,
           created_by,
           created_at,
-          profiles!application_notes_created_by_fkey(emri, mbiemri)
+          profiles!created_by(emri, mbiemri)
         `)
         .eq('application_id', application.id)
         .order('created_at', { ascending: false });
@@ -218,7 +218,7 @@ export default function ApplicationCardBase({
           role,
           created_by,
           created_at,
-          profiles!application_notes_created_by_fkey(emri, mbiemri)
+          profiles!created_by(emri, mbiemri)
         `)
         .eq('application_id', application.id)
         .order('created_at', { ascending: false });
