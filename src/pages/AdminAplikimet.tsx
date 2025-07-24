@@ -12,6 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { X, Search, Check, ChevronDown } from "lucide-react";
 import ApplicationCardBase from '@/components/ApplicationCardBase';
+import AplikimeTable from '@/components/AplikimeTable';
 import { EkzekutivLayout } from '@/components/EkzekutivLayout';
 
 interface Application {
@@ -30,6 +31,7 @@ interface Application {
   fusha?: { label: string };
   bashkia?: { label: string };
   status?: { label: string };
+  assigned_ekspert?: { emri: string; mbiemri: string } | null;
 }
 
 interface FilterOptions {
@@ -117,16 +119,17 @@ export default function AdminAplikimet() {
         .from('applications')
         .select(`
           *,
-          fusha (label),
-          bashkia (label),
-          status (label)
+          fusha:fusha_id (label),
+          bashkia:bashkia_id (label),
+          status:status_id (label),
+          assigned_ekspert:assigned_ekspert_id (emri, mbiemri)
         `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       
       if (data) {
-        setApplications(data as Application[]);
+        setApplications(data as any);
       }
     } catch (error) {
       console.error('Error fetching applications:', error);
@@ -141,9 +144,10 @@ export default function AdminAplikimet() {
         .from('applications')
         .select(`
           *,
-          fusha (label),
-          bashkia (label),
-          status (label)
+          fusha:fusha_id (label),
+          bashkia:bashkia_id (label),
+          status:status_id (label),
+          assigned_ekspert:assigned_ekspert_id (emri, mbiemri)
         `)
         .eq('assigned_ekspert_id', user.id)
         .order('created_at', { ascending: false });
@@ -151,7 +155,7 @@ export default function AdminAplikimet() {
       if (error) throw error;
       
       if (data) {
-        setApplications(data as Application[]);
+        setApplications(data as any);
       }
     } catch (error) {
       console.error('Error fetching applications:', error);
@@ -538,7 +542,7 @@ export default function AdminAplikimet() {
         </Card>
       )}
 
-      {/* Applications List */}
+      {/* Applications Table */}
       {userRole === 'ekzekutiv' && (
         <div>
           <div className="mb-6">
@@ -548,39 +552,12 @@ export default function AdminAplikimet() {
             </p>
           </div>
           
-          {filteredApplications.length === 0 ? (
-            <div className="text-center p-12 border-2 border-dashed border-muted rounded-lg">
-              <p className="text-muted-foreground text-lg">
-                {applications.length === 0 
-                  ? "Nuk ka aplikime për të shfaqur." 
-                  : "Asnjë aplikim nuk përputhet me kriteret e kërkimit."}
-              </p>
-              {applications.length > 0 && (
-                <Button variant="outline" onClick={clearFilters} className="mt-4">
-                  Pastro Filtrat
-                </Button>
-              )}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {filteredApplications.map((application) => (
-                <ApplicationCardBase
-                  key={application.id}
-                  application={application}
-                  canEditStatus={true}
-                  canAssignEkspert={true}
-                  commentPermissions={{ 
-                    canView: true, 
-                    canWrite: true, 
-                    role: 'ekzekutiv' 
-                  }}
-                  onUpdate={() => {
-                    fetchApplications();
-                  }}
-                />
-              ))}
-            </div>
-          )}
+          <AplikimeTable
+            applications={filteredApplications}
+            onUpdate={fetchApplications}
+            statusOptions={filterOptions.status}
+            ekspertOptions={filterOptions.ekspertë}
+          />
         </div>
       )}
       {userRole === 'ekspert' && (
