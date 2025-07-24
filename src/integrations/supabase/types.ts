@@ -14,6 +14,100 @@ export type Database = {
   }
   public: {
     Tables: {
+      applications: {
+        Row: {
+          bashkia_id: string
+          created_at: string | null
+          dokumente: Json | null
+          fusha_id: string
+          grupmosha: string
+          id: string
+          pershkrimi: string
+          prototip_url: string | null
+          status_id: string
+          titulli: string
+          user_id: string
+        }
+        Insert: {
+          bashkia_id: string
+          created_at?: string | null
+          dokumente?: Json | null
+          fusha_id: string
+          grupmosha: string
+          id?: string
+          pershkrimi: string
+          prototip_url?: string | null
+          status_id: string
+          titulli: string
+          user_id: string
+        }
+        Update: {
+          bashkia_id?: string
+          created_at?: string | null
+          dokumente?: Json | null
+          fusha_id?: string
+          grupmosha?: string
+          id?: string
+          pershkrimi?: string
+          prototip_url?: string | null
+          status_id?: string
+          titulli?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_bashkia_id_fkey"
+            columns: ["bashkia_id"]
+            isOneToOne: false
+            referencedRelation: "bashkia"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_fusha_id_fkey"
+            columns: ["fusha_id"]
+            isOneToOne: false
+            referencedRelation: "fusha"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_status_id_fkey"
+            columns: ["status_id"]
+            isOneToOne: false
+            referencedRelation: "status"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bashkia: {
+        Row: {
+          id: string
+          label: string
+        }
+        Insert: {
+          id?: string
+          label: string
+        }
+        Update: {
+          id?: string
+          label?: string
+        }
+        Relationships: []
+      }
+      fusha: {
+        Row: {
+          id: string
+          label: string
+        }
+        Insert: {
+          id?: string
+          label: string
+        }
+        Update: {
+          id?: string
+          label?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null
@@ -37,6 +131,63 @@ export type Database = {
           role?: string | null
         }
         Relationships: []
+      }
+      status: {
+        Row: {
+          id: string
+          label: string
+        }
+        Insert: {
+          id?: string
+          label: string
+        }
+        Update: {
+          id?: string
+          label?: string
+        }
+        Relationships: []
+      }
+      status_history: {
+        Row: {
+          application_id: string | null
+          changed_at: string | null
+          changed_by: string | null
+          comment: string | null
+          id: string
+          status_id: string
+        }
+        Insert: {
+          application_id?: string | null
+          changed_at?: string | null
+          changed_by?: string | null
+          comment?: string | null
+          id?: string
+          status_id: string
+        }
+        Update: {
+          application_id?: string | null
+          changed_at?: string | null
+          changed_by?: string | null
+          comment?: string | null
+          id?: string
+          status_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "status_history_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "status_history_status_id_fkey"
+            columns: ["status_id"]
+            isOneToOne: false
+            referencedRelation: "status"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
