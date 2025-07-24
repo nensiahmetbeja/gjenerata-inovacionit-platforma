@@ -9,7 +9,7 @@ interface Application {
   pershkrimi: string;
   grupmosha: string;
   prototip_url?: string;
-  dokumente?: any[];
+  dokumente?: any;
   created_at: string;
   user_id: string;
   fusha_id: string;
@@ -40,7 +40,7 @@ export default function ApplicationCardEkzekutiv() {
       if (error) throw error;
       
       if (data) {
-        setApplications(data);
+        setApplications(data as Application[]);
       }
     } catch (error) {
       console.error('Error fetching applications:', error);

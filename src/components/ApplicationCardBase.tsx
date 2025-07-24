@@ -98,16 +98,23 @@ export default function ApplicationCardBase({
     const fetchComments = async () => {
       if (!commentPermissions.canView) return;
       
-      const { data } = await supabase
-        .from('application_notes')
+      const { data, error } = await supabase
+        .from('application_notes' as any)
         .select(`
-          *,
+          id,
+          content,
+          note_type,
+          role,
+          created_by,
+          created_at,
           profiles!application_notes_created_by_fkey(emri, mbiemri)
         `)
         .eq('application_id', application.id)
         .order('created_at', { ascending: false });
       
-      if (data) setComments(data);
+      if (!error && data) {
+        setComments(data as unknown as ApplicationNote[]);
+      }
     };
     fetchComments();
   }, [application.id, commentPermissions.canView]);
@@ -118,7 +125,7 @@ export default function ApplicationCardBase({
       // Update application status
       const { error: appError } = await supabase
         .from('applications')
-        .update({ status_id: newStatusId })
+        .update({ status_id: newStatusId } as any)
         .eq('id', application.id);
 
       if (appError) throw appError;
@@ -157,7 +164,7 @@ export default function ApplicationCardBase({
     try {
       const { error } = await supabase
         .from('applications')
-        .update({ assigned_ekspert_id: ekspertId })
+        .update({ assigned_ekspert_id: ekspertId } as any)
         .eq('id', application.id);
 
       if (error) throw error;
@@ -184,7 +191,7 @@ export default function ApplicationCardBase({
     setIsSubmittingComment(true);
     try {
       const { error } = await supabase
-        .from('application_notes')
+        .from('application_notes' as any)
         .insert({
           application_id: application.id,
           content: newComment,
@@ -202,16 +209,23 @@ export default function ApplicationCardBase({
       });
 
       // Refresh comments
-      const { data } = await supabase
-        .from('application_notes')
+      const { data, error: fetchError } = await supabase
+        .from('application_notes' as any)
         .select(`
-          *,
+          id,
+          content,
+          note_type,
+          role,
+          created_by,
+          created_at,
           profiles!application_notes_created_by_fkey(emri, mbiemri)
         `)
         .eq('application_id', application.id)
         .order('created_at', { ascending: false });
       
-      if (data) setComments(data);
+      if (!fetchError && data) {
+        setComments(data as unknown as ApplicationNote[]);
+      }
     } catch (error) {
       console.error('Error adding comment:', error);
       toast({
