@@ -14,8 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      application_notes: {
+        Row: {
+          application_id: string | null
+          content: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          note_type: string | null
+          role: string | null
+        }
+        Insert: {
+          application_id?: string | null
+          content: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          note_type?: string | null
+          role?: string | null
+        }
+        Update: {
+          application_id?: string | null
+          content?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          note_type?: string | null
+          role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "application_notes_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       applications: {
         Row: {
+          assigned_ekspert_id: string | null
           bashkia_id: string
           created_at: string | null
           dokumente: Json | null
@@ -29,6 +68,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          assigned_ekspert_id?: string | null
           bashkia_id: string
           created_at?: string | null
           dokumente?: Json | null
@@ -42,6 +82,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          assigned_ekspert_id?: string | null
           bashkia_id?: string
           created_at?: string | null
           dokumente?: Json | null
@@ -191,7 +232,26 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      latest_ekspert_note_per_application: {
+        Row: {
+          application_id: string | null
+          content: string | null
+          created_at: string | null
+          created_by: string | null
+          id: string | null
+          note_type: string | null
+          role: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "application_notes_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never
