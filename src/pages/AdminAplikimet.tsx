@@ -8,7 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { X, Search } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { X, Search, Check, ChevronDown } from "lucide-react";
 import ApplicationCardBase from '@/components/ApplicationCardBase';
 import { EkzekutivLayout } from '@/components/EkzekutivLayout';
 
@@ -315,37 +317,57 @@ export default function AdminAplikimet() {
 
             {/* Main Filters Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Innovation Field - Multi-select */}
+              {/* Innovation Field - Multi-select Dropdown */}
               <div>
                 <label className="text-sm font-medium text-muted-foreground mb-2 block">
                   Fusha e Inovacionit
                 </label>
-                <div className="space-y-2 max-h-40 overflow-y-auto border rounded-md p-3">
-                  {filterOptions.fusha.map((fusha) => (
-                    <div key={fusha.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`fusha-${fusha.id}`}
-                        checked={filters.fusha_ids.includes(fusha.id)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setFilters(prev => ({ 
-                              ...prev, 
-                              fusha_ids: [...prev.fusha_ids, fusha.id] 
-                            }));
-                          } else {
-                            setFilters(prev => ({ 
-                              ...prev, 
-                              fusha_ids: prev.fusha_ids.filter(id => id !== fusha.id) 
-                            }));
-                          }
-                        }}
-                      />
-                      <label htmlFor={`fusha-${fusha.id}`} className="text-sm">
-                        {fusha.label}
-                      </label>
-                    </div>
-                  ))}
-                </div>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-between">
+                      {filters.fusha_ids.length > 0 
+                        ? `${filters.fusha_ids.length} të zgjedhura`
+                        : "Zgjedh fushat..."
+                      }
+                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Kërko fushat..." />
+                      <CommandList>
+                        <CommandEmpty>Nuk u gjend asgjë.</CommandEmpty>
+                        <CommandGroup>
+                          {filterOptions.fusha.map((fusha) => (
+                            <CommandItem
+                              key={fusha.id}
+                              onSelect={() => {
+                                if (filters.fusha_ids.includes(fusha.id)) {
+                                  setFilters(prev => ({ 
+                                    ...prev, 
+                                    fusha_ids: prev.fusha_ids.filter(id => id !== fusha.id) 
+                                  }));
+                                } else {
+                                  setFilters(prev => ({ 
+                                    ...prev, 
+                                    fusha_ids: [...prev.fusha_ids, fusha.id] 
+                                  }));
+                                }
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  filters.fusha_ids.includes(fusha.id) ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              {fusha.label}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
                 {filters.fusha_ids.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-2">
                     {filters.fusha_ids.map(id => {
@@ -406,37 +428,57 @@ export default function AdminAplikimet() {
                 </Select>
               </div>
 
-              {/* Status - Multi-select */}
+              {/* Status - Multi-select Dropdown */}
               <div>
                 <label className="text-sm font-medium text-muted-foreground mb-2 block">
                   Statusi
                 </label>
-                <div className="space-y-2 max-h-40 overflow-y-auto border rounded-md p-3">
-                  {filterOptions.status.map((status) => (
-                    <div key={status.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`status-${status.id}`}
-                        checked={filters.status_ids.includes(status.id)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setFilters(prev => ({ 
-                              ...prev, 
-                              status_ids: [...prev.status_ids, status.id] 
-                            }));
-                          } else {
-                            setFilters(prev => ({ 
-                              ...prev, 
-                              status_ids: prev.status_ids.filter(id => id !== status.id) 
-                            }));
-                          }
-                        }}
-                      />
-                      <label htmlFor={`status-${status.id}`} className="text-sm">
-                        {status.label}
-                      </label>
-                    </div>
-                  ))}
-                </div>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-between">
+                      {filters.status_ids.length > 0 
+                        ? `${filters.status_ids.length} të zgjedhura`
+                        : "Zgjedh statuset..."
+                      }
+                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Kërko statuset..." />
+                      <CommandList>
+                        <CommandEmpty>Nuk u gjend asgjë.</CommandEmpty>
+                        <CommandGroup>
+                          {filterOptions.status.map((status) => (
+                            <CommandItem
+                              key={status.id}
+                              onSelect={() => {
+                                if (filters.status_ids.includes(status.id)) {
+                                  setFilters(prev => ({ 
+                                    ...prev, 
+                                    status_ids: prev.status_ids.filter(id => id !== status.id) 
+                                  }));
+                                } else {
+                                  setFilters(prev => ({ 
+                                    ...prev, 
+                                    status_ids: [...prev.status_ids, status.id] 
+                                  }));
+                                }
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  filters.status_ids.includes(status.id) ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              {status.label}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
                 {filters.status_ids.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-2">
                     {filters.status_ids.map(id => {
