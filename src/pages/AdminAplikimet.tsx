@@ -5,9 +5,26 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import ApplicationCardEkzekutiv from '@/components/ApplicationCardEkzekutiv';
-import ApplicationCardEkspert from '@/components/ApplicationCardEkspert';
+import ApplicationCardBase from '@/components/ApplicationCardBase';
 import { ArrowLeft } from 'lucide-react';
+
+interface Application {
+  id: string;
+  titulli: string;
+  pershkrimi: string;
+  grupmosha: string;
+  prototip_url?: string;
+  dokumente?: any;
+  created_at: string;
+  user_id: string;
+  fusha_id: string;
+  bashkia_id: string;
+  status_id: string;
+  assigned_ekspert_id?: string;
+  fusha?: { label: string };
+  bashkia?: { label: string };
+  status?: { label: string };
+}
 
 interface FilterOptions {
   fusha: Array<{ id: string; label: string }>;
@@ -20,16 +37,18 @@ export default function AdminAplikimet() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [filteredApplications, setFilteredApplications] = useState<Application[]>([]);
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     fusha: [],
     bashkia: [],
     status: []
   });
   const [filters, setFilters] = useState({
-    grupmosha: '',
-    fusha_id: '',
-    bashkia_id: '',
-    status_id: ''
+    grupmosha: 'all',
+    fusha_id: 'all',
+    bashkia_id: 'all',
+    status_id: 'all'
   });
 
   useEffect(() => {
@@ -60,9 +79,12 @@ export default function AdminAplikimet() {
 
         setUserRole(profile.role);
         
-        // Fetch filter options for ekzekutiv users
+        // Fetch filter options and applications for ekzekutiv users
         if (profile.role === 'ekzekutiv') {
           await fetchFilterOptions();
+          await fetchApplications();
+        } else if (profile.role === 'ekspert') {
+          await fetchEkspertApplications();
         }
       } catch (error) {
         console.error('Error checking user role:', error);
@@ -73,6 +95,80 @@ export default function AdminAplikimet() {
 
     checkUserRole();
   }, [user]);
+
+  // Apply filters whenever filters or applications change
+  useEffect(() => {
+    applyFilters();
+  }, [filters, applications]);
+
+  const fetchApplications = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('applications')
+        .select(`
+          *,
+          fusha (label),
+          bashkia (label),
+          status (label)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      
+      if (data) {
+        setApplications(data as Application[]);
+      }
+    } catch (error) {
+      console.error('Error fetching applications:', error);
+    }
+  };
+
+  const fetchEkspertApplications = async () => {
+    if (!user?.id) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('applications')
+        .select(`
+          *,
+          fusha (label),
+          bashkia (label),
+          status (label)
+        `)
+        .eq('assigned_ekspert_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      
+      if (data) {
+        setApplications(data as Application[]);
+      }
+    } catch (error) {
+      console.error('Error fetching applications:', error);
+    }
+  };
+
+  const applyFilters = () => {
+    let filtered = [...applications];
+
+    if (filters.grupmosha !== 'all') {
+      filtered = filtered.filter(app => app.grupmosha === filters.grupmosha);
+    }
+
+    if (filters.fusha_id !== 'all') {
+      filtered = filtered.filter(app => app.fusha_id === filters.fusha_id);
+    }
+
+    if (filters.bashkia_id !== 'all') {
+      filtered = filtered.filter(app => app.bashkia_id === filters.bashkia_id);
+    }
+
+    if (filters.status_id !== 'all') {
+      filtered = filtered.filter(app => app.status_id === filters.status_id);
+    }
+
+    setFilteredApplications(filtered);
+  };
 
   const fetchFilterOptions = async () => {
     try {
@@ -99,10 +195,10 @@ export default function AdminAplikimet() {
 
   const clearFilters = () => {
     setFilters({
-      grupmosha: '',
-      fusha_id: '',
-      bashkia_id: '',
-      status_id: ''
+      grupmosha: 'all',
+      fusha_id: 'all',
+      bashkia_id: 'all',
+      status_id: 'all'
     });
   };
 
@@ -195,7 +291,7 @@ export default function AdminAplikimet() {
                       <SelectValue placeholder="Të gjitha" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Të gjitha</SelectItem>
+                      <SelectItem value="all">Të gjitha</SelectItem>
                       <SelectItem value="15-18">15-18 vjeç</SelectItem>
                       <SelectItem value="19-25">19-25 vjeç</SelectItem>
                       <SelectItem value="26-35">26-35 vjeç</SelectItem>
@@ -213,7 +309,7 @@ export default function AdminAplikimet() {
                       <SelectValue placeholder="Të gjitha" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Të gjitha</SelectItem>
+                      <SelectItem value="all">Të gjitha</SelectItem>
                       {filterOptions.fusha.map((fusha) => (
                         <SelectItem key={fusha.id} value={fusha.id}>
                           {fusha.label}
@@ -232,7 +328,7 @@ export default function AdminAplikimet() {
                       <SelectValue placeholder="Të gjitha" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Të gjitha</SelectItem>
+                      <SelectItem value="all">Të gjitha</SelectItem>
                       {filterOptions.bashkia.map((bashkia) => (
                         <SelectItem key={bashkia.id} value={bashkia.id}>
                           {bashkia.label}
@@ -251,7 +347,7 @@ export default function AdminAplikimet() {
                       <SelectValue placeholder="Të gjitha" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Të gjitha</SelectItem>
+                      <SelectItem value="all">Të gjitha</SelectItem>
                       {filterOptions.status.map((status) => (
                         <SelectItem key={status.id} value={status.id}>
                           {status.label}
@@ -270,8 +366,81 @@ export default function AdminAplikimet() {
         )}
 
         {/* Applications List */}
-        {userRole === 'ekzekutiv' && <ApplicationCardEkzekutiv />}
-        {userRole === 'ekspert' && <ApplicationCardEkspert />}
+        {userRole === 'ekzekutiv' && (
+          <div className="space-y-6">
+            <div className="mb-4">
+              <h2 className="text-2xl font-bold">Menaxhimi i Aplikimeve</h2>
+              <p className="text-muted-foreground">
+                Menaxho statusin, cakto ekspertë dhe shto komente për aplikimet.
+                {filteredApplications.length !== applications.length && (
+                  <span className="ml-2 text-sm">
+                    ({filteredApplications.length} nga {applications.length} aplikime)
+                  </span>
+                )}
+              </p>
+            </div>
+            
+            {filteredApplications.length === 0 ? (
+              <div className="text-center p-8">
+                <p className="text-muted-foreground">
+                  {applications.length === 0 
+                    ? "Nuk ka aplikime për të shfaqur." 
+                    : "Asnjë aplikim i disponueshëm për filtrat e zgjedhur."}
+                </p>
+              </div>
+            ) : (
+              filteredApplications.map((application) => (
+                <ApplicationCardBase
+                  key={application.id}
+                  application={application}
+                  canEditStatus={true}
+                  canAssignEkspert={true}
+                  commentPermissions={{ 
+                    canView: true, 
+                    canWrite: true, 
+                    role: 'ekzekutiv' 
+                  }}
+                  onUpdate={() => {
+                    fetchApplications();
+                  }}
+                />
+              ))
+            )}
+          </div>
+        )}
+        {userRole === 'ekspert' && (
+          <div className="space-y-6">
+            <div className="mb-4">
+              <h2 className="text-2xl font-bold">Aplikimet e Caktuara</h2>
+              <p className="text-muted-foreground">
+                Shqyrto dhe komento aplikimet që t'i janë caktuar.
+              </p>
+            </div>
+            
+            {applications.length === 0 ? (
+              <div className="text-center p-8">
+                <p className="text-muted-foreground">Asnjë aplikim i caktuar për ju ende.</p>
+              </div>
+            ) : (
+              applications.map((application) => (
+                <ApplicationCardBase
+                  key={application.id}
+                  application={application}
+                  canEditStatus={false}
+                  canAssignEkspert={false}
+                  commentPermissions={{ 
+                    canView: true, 
+                    canWrite: true, 
+                    role: 'ekspert' 
+                  }}
+                  onUpdate={() => {
+                    fetchEkspertApplications();
+                  }}
+                />
+              ))
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
