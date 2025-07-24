@@ -121,15 +121,30 @@ export default function AdminAplikimet() {
           *,
           fusha:fusha_id (label),
           bashkia:bashkia_id (label),
-          status:status_id (label),
-          assigned_ekspert:profiles!assigned_ekspert_id (emri, mbiemri)
+          status:status_id (label)
         `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       
       if (data) {
-        setApplications(data as any);
+        // Fetch expert info separately for each application
+        const applicationsWithExperts = await Promise.all(
+          data.map(async (app: any) => {
+            if (app.assigned_ekspert_id) {
+              const { data: expert } = await supabase
+                .from('profiles')
+                .select('emri, mbiemri')
+                .eq('id', app.assigned_ekspert_id)
+                .single();
+              
+              return { ...app, assigned_ekspert: expert };
+            }
+            return { ...app, assigned_ekspert: null };
+          })
+        );
+        
+        setApplications(applicationsWithExperts as any);
       }
     } catch (error) {
       console.error('Error fetching applications:', error);
@@ -146,8 +161,7 @@ export default function AdminAplikimet() {
           *,
           fusha:fusha_id (label),
           bashkia:bashkia_id (label),
-          status:status_id (label),
-          assigned_ekspert:profiles!assigned_ekspert_id (emri, mbiemri)
+          status:status_id (label)
         `)
         .eq('assigned_ekspert_id', user.id)
         .order('created_at', { ascending: false });
@@ -155,7 +169,23 @@ export default function AdminAplikimet() {
       if (error) throw error;
       
       if (data) {
-        setApplications(data as any);
+        // Fetch expert info separately for each application
+        const applicationsWithExperts = await Promise.all(
+          data.map(async (app: any) => {
+            if (app.assigned_ekspert_id) {
+              const { data: expert } = await supabase
+                .from('profiles')
+                .select('emri, mbiemri')
+                .eq('id', app.assigned_ekspert_id)
+                .single();
+              
+              return { ...app, assigned_ekspert: expert };
+            }
+            return { ...app, assigned_ekspert: null };
+          })
+        );
+        
+        setApplications(applicationsWithExperts as any);
       }
     } catch (error) {
       console.error('Error fetching applications:', error);
