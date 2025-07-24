@@ -373,10 +373,10 @@ export default function ApplicationCardBase({
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  const handleDocumentDownload = async (document: any) => {
+  const handleDocumentDownload = async (doc: any) => {
     try {
       // Extract the path from the URL for Supabase storage download
-      const urlParts = document.url.split('/object/public/applications/');
+      const urlParts = doc.url.split('/object/public/applications/');
       if (urlParts.length !== 2) {
         throw new Error('Invalid document URL format');
       }
@@ -393,7 +393,7 @@ export default function ApplicationCardBase({
       const url = URL.createObjectURL(data);
       const link = document.createElement('a');
       link.href = url;
-      link.download = document.name;
+      link.download = doc.name;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -401,7 +401,7 @@ export default function ApplicationCardBase({
 
       toast({
         title: "Dokumenti u shkarkua",
-        description: `${document.name} u shkarkua me sukses.`
+        description: `${doc.name} u shkarkua me sukses.`
       });
     } catch (error) {
       console.error('Error downloading document:', error);
