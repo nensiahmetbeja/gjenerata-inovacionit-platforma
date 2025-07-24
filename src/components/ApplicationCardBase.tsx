@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, FileText, User, Download } from "lucide-react";
+import { ExternalLink, FileText, User, Download, Edit2, Trash2, Check, X } from "lucide-react";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from "@/hooks/use-toast";
@@ -67,6 +67,8 @@ export default function ApplicationCardBase({
   const [newComment, setNewComment] = useState('');
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editingCommentContent, setEditingCommentContent] = useState('');
 
   // Fetch status options
   useEffect(() => {
@@ -236,6 +238,105 @@ export default function ApplicationCardBase({
     } finally {
       setIsSubmittingComment(false);
     }
+  };
+
+  const handleEditComment = async (commentId: string) => {
+    if (!editingCommentContent.trim()) return;
+    
+    try {
+      const { error } = await supabase
+        .from('application_notes' as any)
+        .update({ content: editingCommentContent })
+        .eq('id', commentId);
+
+      if (error) throw error;
+
+      setEditingCommentId(null);
+      setEditingCommentContent('');
+      
+      toast({
+        title: "Përditësuar me sukses",
+        description: "Komenti u përditësua me sukses"
+      });
+
+      // Refresh comments
+      const { data, error: fetchError } = await supabase
+        .from('application_notes' as any)
+        .select(`
+          id,
+          content,
+          note_type,
+          role,
+          created_by,
+          created_at,
+          profiles!created_by(emri, mbiemri)
+        `)
+        .eq('application_id', application.id)
+        .order('created_at', { ascending: false });
+      
+      if (!fetchError && data) {
+        setComments(data as unknown as ApplicationNote[]);
+      }
+    } catch (error) {
+      console.error('Error updating comment:', error);
+      toast({
+        title: "Gabim gjatë përditësimit",
+        description: "Ka ndodhur një gabim gjatë përditësimit të komentit",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      const { error } = await supabase
+        .from('application_notes' as any)
+        .delete()
+        .eq('id', commentId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Fshirë me sukses",
+        description: "Komenti u fshi me sukses"
+      });
+
+      // Refresh comments
+      const { data, error: fetchError } = await supabase
+        .from('application_notes' as any)
+        .select(`
+          id,
+          content,
+          note_type,
+          role,
+          created_by,
+          created_at,
+          profiles!created_by(emri, mbiemri)
+        `)
+        .eq('application_id', application.id)
+        .order('created_at', { ascending: false });
+      
+      if (!fetchError && data) {
+        setComments(data as unknown as ApplicationNote[]);
+      }
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      toast({
+        title: "Gabim gjatë fshirjes",
+        description: "Ka ndodhur një gabim gjatë fshirjes së komentit",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const startEditingComment = (comment: ApplicationNote) => {
+    setEditingCommentId(comment.id);
+    setEditingCommentContent(comment.content);
+  };
+
+  const cancelEditingComment = () => {
+    setEditingCommentId(null);
+    setEditingCommentContent('');
   };
 
   const formatFileSize = (bytes: number) => {
@@ -445,8 +546,57 @@ export default function ApplicationCardBase({
                       <span className="text-xs text-muted-foreground ml-auto">
                         {new Date(comment.created_at).toLocaleDateString('sq-AL')} {new Date(comment.created_at).toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })}
                       </span>
+                      {/* Edit/Delete buttons for own comments */}
+                      {comment.created_by === user?.id && (
+                        <div className="flex items-center gap-1 ml-2">
+                          {editingCommentId === comment.id ? (
+                            <>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditComment(comment.id)}
+                                disabled={!editingCommentContent.trim()}
+                              >
+                                <Check className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={cancelEditingComment}
+                              >
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </>
+                          ) : (
+                            <>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => startEditingComment(comment)}
+                              >
+                                <Edit2 className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteComment(comment.id)}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <p className="text-sm leading-relaxed">{comment.content}</p>
+                    {editingCommentId === comment.id ? (
+                      <Textarea
+                        value={editingCommentContent}
+                        onChange={(e) => setEditingCommentContent(e.target.value)}
+                        className="min-h-[60px] text-sm"
+                      />
+                    ) : (
+                      <p className="text-sm leading-relaxed">{comment.content}</p>
+                    )}
                   </div>
                 ))}
                 {comments.length === 0 && (
