@@ -248,9 +248,17 @@ export default function ApplicationCardBase({
 
   const handleDocumentDownload = async (document: any) => {
     try {
+      // Extract the path from the URL for Supabase storage download
+      const urlParts = document.url.split('/object/public/applications/');
+      if (urlParts.length !== 2) {
+        throw new Error('Invalid document URL format');
+      }
+      
+      const filePath = urlParts[1];
+      
       const { data, error } = await supabase.storage
         .from('applications')
-        .download(document.path);
+        .download(filePath);
 
       if (error) throw error;
 
