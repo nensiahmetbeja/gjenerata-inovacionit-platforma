@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
-import { InfoSection } from '@/components/InfoSection';
-import { SubmissionForm } from '@/components/SubmissionForm';
+import { InnovationWorkspace } from '@/components/InnovationWorkspace';
+import { ResourcesSidebar } from '@/components/ResourcesSidebar';
 import { SubmissionSummary } from '@/components/SubmissionSummary';
+import { LogOut } from 'lucide-react';
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
@@ -38,7 +39,13 @@ const Index = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-xl text-muted-foreground">Po ngarkohet...</p>
+        <div className="text-center">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 w-48 bg-muted rounded-lg mx-auto"></div>
+            <div className="h-4 w-32 bg-muted rounded mx-auto"></div>
+          </div>
+          <p className="text-xl text-muted-foreground mt-4">Po ngarkohet...</p>
+        </div>
       </div>
     );
   }
@@ -50,40 +57,70 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card">
+      <header className="border-b bg-primary text-primary-foreground sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold text-primary">Gjenerata e Inovacionit</h1>
+            <h1 className="text-xl font-bold">Gjenerata e Inovacionit</h1>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">
-              Mirëseardhje, {user.user_metadata?.emri} {user.user_metadata?.mbiemri}
-            </span>
-            <Button onClick={signOut} variant="outline" size="sm">
-              Dil
+            <div className="hidden sm:flex flex-col text-right">
+              <span className="text-sm font-medium">
+                {user.user_metadata?.emri} {user.user_metadata?.mbiemri}
+              </span>
+              <span className="text-xs text-primary-foreground/80">Aplikant</span>
+            </div>
+            <Button 
+              onClick={signOut} 
+              variant="secondary" 
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="hidden sm:inline">Dil</span>
             </Button>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 max-w-4xl">
+      <main className="container mx-auto px-4 py-8">
         {!showSummary ? (
-          <>
-            <InfoSection />
-            <SubmissionForm onSubmissionSuccess={handleSubmissionSuccess} />
-          </>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Main Content Area */}
+            <div className="lg:col-span-3">
+              <InnovationWorkspace onSubmissionSuccess={handleSubmissionSuccess} />
+            </div>
+            
+            {/* Resources Sidebar */}
+            <div className="lg:col-span-1">
+              <ResourcesSidebar />
+            </div>
+          </div>
         ) : (
-          <div id="submission-summary">
+          <div id="submission-summary" className="max-w-4xl mx-auto">
             <SubmissionSummary submission={submissionData} />
-            <div className="text-center">
-              <Button onClick={handleNewSubmission} variant="outline" size="lg">
+            <div className="text-center mt-8">
+              <Button 
+                onClick={handleNewSubmission} 
+                variant="outline" 
+                size="lg"
+                className="btn-institutional"
+              >
                 Dorëzoni një aplikim të ri
               </Button>
             </div>
           </div>
         )}
       </main>
+
+      {/* Footer */}
+      <footer className="border-t bg-muted/30 mt-16">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center text-sm text-muted-foreground">
+            <p>© 2024 Gjenerata e Inovacionit. Një nismë për të ndryshuar të ardhmen.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
