@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { EkzekutivLayout } from '@/components/EkzekutivLayout';
 
 export default function AdminDashboardEkzekutiv() {
   const [loading, setLoading] = useState(true);
@@ -55,71 +56,73 @@ export default function AdminDashboardEkzekutiv() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Dashboard Ekzekutiv</h1>
-            <p className="text-muted-foreground mt-2">Mirë se erdhe, {userRole}</p>
+    <EkzekutivLayout>
+      <div className="p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Dashboard Ekzekutiv</h1>
+              <p className="text-muted-foreground mt-2">Mirë se erdhe, {userRole}</p>
+            </div>
+            <Button variant="outline" onClick={handleSignOut}>
+              Dil
+            </Button>
           </div>
-          <Button variant="outline" onClick={handleSignOut}>
-            Dil
-          </Button>
-        </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>Aplikimet e Reja</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">12</p>
-              <p className="text-muted-foreground">Për rishikim</p>
-            </CardContent>
-          </Card>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <CardTitle>Aplikimet e Reja</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold">12</p>
+                <p className="text-muted-foreground">Për rishikim</p>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Vendime Ekzekutive</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">8</p>
-              <p className="text-muted-foreground">Në pritje të aprovimit</p>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Vendime Ekzekutive</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold">8</p>
+                <p className="text-muted-foreground">Në pritje të aprovimit</p>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Raportet</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">24</p>
-              <p className="text-muted-foreground">Aplikimet këtë muaj</p>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Raportet</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold">24</p>
+                <p className="text-muted-foreground">Aplikimet këtë muaj</p>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Menaxhimi i Ekspertëve</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">5</p>
-              <p className="text-muted-foreground">Ekspertë aktivë</p>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Menaxhimi i Ekspertëve</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold">5</p>
+                <p className="text-muted-foreground">Ekspertë aktivë</p>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Aktiviteti i Fundit</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Aplikimi i fundit u pranua më {new Date().toLocaleDateString('sq-AL')}
-              </p>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Aktiviteti i Fundit</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Aplikimi i fundit u pranua më {new Date().toLocaleDateString('sq-AL')}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
-    </div>
+    </EkzekutivLayout>
   );
 }
