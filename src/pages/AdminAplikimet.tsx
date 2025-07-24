@@ -3,8 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { X, Search } from "lucide-react";
 import ApplicationCardBase from '@/components/ApplicationCardBase';
 import { EkzekutivLayout } from '@/components/EkzekutivLayout';
 
@@ -30,6 +34,7 @@ interface FilterOptions {
   fusha: Array<{ id: string; label: string }>;
   bashkia: Array<{ id: string; label: string }>;
   status: Array<{ id: string; label: string }>;
+  ekspertë: Array<{ id: string; emri: string; mbiemri: string }>;
 }
 
 export default function AdminAplikimet() {
@@ -42,13 +47,16 @@ export default function AdminAplikimet() {
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     fusha: [],
     bashkia: [],
-    status: []
+    status: [],
+    ekspertë: []
   });
   const [filters, setFilters] = useState({
+    titulli: '',
+    fusha_ids: [] as string[],
     grupmosha: 'all',
-    fusha_id: 'all',
     bashkia_id: 'all',
-    status_id: 'all'
+    status_ids: [] as string[],
+    ekspert_id: 'all'
   });
 
   useEffect(() => {
@@ -151,20 +159,40 @@ export default function AdminAplikimet() {
   const applyFilters = () => {
     let filtered = [...applications];
 
+    // Search by title
+    if (filters.titulli.trim()) {
+      filtered = filtered.filter(app => 
+        app.titulli.toLowerCase().includes(filters.titulli.toLowerCase())
+      );
+    }
+
+    // Filter by age group
     if (filters.grupmosha !== 'all') {
       filtered = filtered.filter(app => app.grupmosha === filters.grupmosha);
     }
 
-    if (filters.fusha_id !== 'all') {
-      filtered = filtered.filter(app => app.fusha_id === filters.fusha_id);
+    // Filter by innovation fields (multi-select)
+    if (filters.fusha_ids.length > 0) {
+      filtered = filtered.filter(app => filters.fusha_ids.includes(app.fusha_id));
     }
 
+    // Filter by municipality
     if (filters.bashkia_id !== 'all') {
       filtered = filtered.filter(app => app.bashkia_id === filters.bashkia_id);
     }
 
-    if (filters.status_id !== 'all') {
-      filtered = filtered.filter(app => app.status_id === filters.status_id);
+    // Filter by status (multi-select)
+    if (filters.status_ids.length > 0) {
+      filtered = filtered.filter(app => filters.status_ids.includes(app.status_id));
+    }
+
+    // Filter by assigned expert
+    if (filters.ekspert_id !== 'all') {
+      if (filters.ekspert_id === 'unassigned') {
+        filtered = filtered.filter(app => !app.assigned_ekspert_id);
+      } else {
+        filtered = filtered.filter(app => app.assigned_ekspert_id === filters.ekspert_id);
+      }
     }
 
     setFilteredApplications(filtered);
@@ -172,16 +200,18 @@ export default function AdminAplikimet() {
 
   const fetchFilterOptions = async () => {
     try {
-      const [fushaRes, bashkiaRes, statusRes] = await Promise.all([
+      const [fushaRes, bashkiaRes, statusRes, ekspertRes] = await Promise.all([
         supabase.from('fusha').select('id, label').order('label'),
         supabase.from('bashkia').select('id, label').order('label'),
-        supabase.from('status').select('id, label').order('label')
+        supabase.from('status').select('id, label').order('label'),
+        supabase.from('profiles').select('id, emri, mbiemri').eq('role', 'ekspert').order('emri')
       ]);
 
       setFilterOptions({
         fusha: fushaRes.data || [],
         bashkia: bashkiaRes.data || [],
-        status: statusRes.data || []
+        status: statusRes.data || [],
+        ekspertë: ekspertRes.data || []
       });
     } catch (error) {
       console.error('Error fetching filter options:', error);
@@ -195,10 +225,12 @@ export default function AdminAplikimet() {
 
   const clearFilters = () => {
     setFilters({
+      titulli: '',
+      fusha_ids: [],
       grupmosha: 'all',
-      fusha_id: 'all',
       bashkia_id: 'all',
-      status_id: 'all'
+      status_ids: [],
+      ekspert_id: 'all'
     });
   };
 
@@ -260,120 +292,236 @@ export default function AdminAplikimet() {
       </div>
       {/* Filters for Ekzekutiv */}
       {userRole === 'ekzekutiv' && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg">Filtro Aplikimet</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                    Grupmosha
-                  </label>
-                  <Select value={filters.grupmosha} onValueChange={(value) => setFilters(prev => ({ ...prev, grupmosha: value }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Të gjitha" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Të gjitha</SelectItem>
-                      <SelectItem value="15-18">15-18 vjeç</SelectItem>
-                      <SelectItem value="19-25">19-25 vjeç</SelectItem>
-                      <SelectItem value="26-35">26-35 vjeç</SelectItem>
-                      <SelectItem value="36+">36+ vjeç</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Search className="w-5 h-5" />
+              Filtro Aplikimet
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Title Search */}
+            <div>
+              <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                Titulli i Projektit
+              </label>
+              <Input
+                placeholder="Kërko sipas titullit..."
+                value={filters.titulli}
+                onChange={(e) => setFilters(prev => ({ ...prev, titulli: e.target.value }))}
+                className="w-full"
+              />
+            </div>
 
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                    Tema/Fusha
-                  </label>
-                  <Select value={filters.fusha_id} onValueChange={(value) => setFilters(prev => ({ ...prev, fusha_id: value }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Të gjitha" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Të gjitha</SelectItem>
-                      {filterOptions.fusha.map((fusha) => (
-                        <SelectItem key={fusha.id} value={fusha.id}>
+            {/* Main Filters Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Innovation Field - Multi-select */}
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                  Fusha e Inovacionit
+                </label>
+                <div className="space-y-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                  {filterOptions.fusha.map((fusha) => (
+                    <div key={fusha.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`fusha-${fusha.id}`}
+                        checked={filters.fusha_ids.includes(fusha.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setFilters(prev => ({ 
+                              ...prev, 
+                              fusha_ids: [...prev.fusha_ids, fusha.id] 
+                            }));
+                          } else {
+                            setFilters(prev => ({ 
+                              ...prev, 
+                              fusha_ids: prev.fusha_ids.filter(id => id !== fusha.id) 
+                            }));
+                          }
+                        }}
+                      />
+                      <label htmlFor={`fusha-${fusha.id}`} className="text-sm">
+                        {fusha.label}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+                {filters.fusha_ids.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {filters.fusha_ids.map(id => {
+                      const fusha = filterOptions.fusha.find(f => f.id === id);
+                      return fusha ? (
+                        <Badge key={id} variant="secondary" className="text-xs">
                           {fusha.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                    Bashkia
-                  </label>
-                  <Select value={filters.bashkia_id} onValueChange={(value) => setFilters(prev => ({ ...prev, bashkia_id: value }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Të gjitha" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Të gjitha</SelectItem>
-                      {filterOptions.bashkia.map((bashkia) => (
-                        <SelectItem key={bashkia.id} value={bashkia.id}>
-                          {bashkia.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                    Statusi
-                  </label>
-                  <Select value={filters.status_id} onValueChange={(value) => setFilters(prev => ({ ...prev, status_id: value }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Të gjitha" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Të gjitha</SelectItem>
-                      {filterOptions.status.map((status) => (
-                        <SelectItem key={status.id} value={status.id}>
-                          {status.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                          <X 
+                            className="ml-1 h-3 w-3 cursor-pointer" 
+                            onClick={() => setFilters(prev => ({ 
+                              ...prev, 
+                              fusha_ids: prev.fusha_ids.filter(fid => fid !== id) 
+                            }))}
+                          />
+                        </Badge>
+                      ) : null;
+                    })}
+                  </div>
+                )}
               </div>
-              
+
+              {/* Age Group */}
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                  Grupmosha
+                </label>
+                <Select value={filters.grupmosha} onValueChange={(value) => setFilters(prev => ({ ...prev, grupmosha: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Të gjitha" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Të gjitha</SelectItem>
+                    <SelectItem value="15-18">15-18 vjeç</SelectItem>
+                    <SelectItem value="19-25">19-25 vjeç</SelectItem>
+                    <SelectItem value="26-35">26-35 vjeç</SelectItem>
+                    <SelectItem value="36+">36+ vjeç</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Municipality */}
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                  Bashkia
+                </label>
+                <Select value={filters.bashkia_id} onValueChange={(value) => setFilters(prev => ({ ...prev, bashkia_id: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Të gjitha" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Të gjitha</SelectItem>
+                    {filterOptions.bashkia.map((bashkia) => (
+                      <SelectItem key={bashkia.id} value={bashkia.id}>
+                        {bashkia.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Status - Multi-select */}
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                  Statusi
+                </label>
+                <div className="space-y-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                  {filterOptions.status.map((status) => (
+                    <div key={status.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`status-${status.id}`}
+                        checked={filters.status_ids.includes(status.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setFilters(prev => ({ 
+                              ...prev, 
+                              status_ids: [...prev.status_ids, status.id] 
+                            }));
+                          } else {
+                            setFilters(prev => ({ 
+                              ...prev, 
+                              status_ids: prev.status_ids.filter(id => id !== status.id) 
+                            }));
+                          }
+                        }}
+                      />
+                      <label htmlFor={`status-${status.id}`} className="text-sm">
+                        {status.label}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+                {filters.status_ids.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {filters.status_ids.map(id => {
+                      const status = filterOptions.status.find(s => s.id === id);
+                      return status ? (
+                        <Badge key={id} variant="secondary" className="text-xs">
+                          {status.label}
+                          <X 
+                            className="ml-1 h-3 w-3 cursor-pointer" 
+                            onClick={() => setFilters(prev => ({ 
+                              ...prev, 
+                              status_ids: prev.status_ids.filter(sid => sid !== id) 
+                            }))}
+                          />
+                        </Badge>
+                      ) : null;
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Assigned Expert */}
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                  Eksperti i caktuar
+                </label>
+                <Select value={filters.ekspert_id} onValueChange={(value) => setFilters(prev => ({ ...prev, ekspert_id: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Të gjithë" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Të gjithë</SelectItem>
+                    <SelectItem value="unassigned">Pa u caktuar</SelectItem>
+                    {filterOptions.ekspertë.map((ekspert) => (
+                      <SelectItem key={ekspert.id} value={ekspert.id}>
+                        {ekspert.emri} {ekspert.mbiemri}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between pt-4 border-t">
+              <div className="text-sm text-muted-foreground">
+                {filteredApplications.length !== applications.length && (
+                  <span>
+                    Shfaqen {filteredApplications.length} nga {applications.length} aplikime
+                  </span>
+                )}
+              </div>
               <Button variant="outline" onClick={clearFilters} size="sm">
                 Pastro Filtrat
               </Button>
-            </CardContent>
+            </div>
+          </CardContent>
         </Card>
       )}
 
       {/* Applications List */}
       {userRole === 'ekzekutiv' && (
-          <div className="space-y-6">
-            <div className="mb-4">
-              <h2 className="text-2xl font-bold">Menaxhimi i Aplikimeve</h2>
-              <p className="text-muted-foreground">
-                Menaxho statusin, cakto ekspertë dhe shto komente për aplikimet.
-                {filteredApplications.length !== applications.length && (
-                  <span className="ml-2 text-sm">
-                    ({filteredApplications.length} nga {applications.length} aplikime)
-                  </span>
-                )}
+        <div>
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold">Menaxhimi i Aplikimeve</h2>
+            <p className="text-muted-foreground">
+              Menaxho statusin, cakto ekspertë dhe shto komente për aplikimet.
+            </p>
+          </div>
+          
+          {filteredApplications.length === 0 ? (
+            <div className="text-center p-12 border-2 border-dashed border-muted rounded-lg">
+              <p className="text-muted-foreground text-lg">
+                {applications.length === 0 
+                  ? "Nuk ka aplikime për të shfaqur." 
+                  : "Asnjë aplikim nuk përputhet me kriteret e kërkimit."}
               </p>
+              {applications.length > 0 && (
+                <Button variant="outline" onClick={clearFilters} className="mt-4">
+                  Pastro Filtrat
+                </Button>
+              )}
             </div>
-            
-            {filteredApplications.length === 0 ? (
-              <div className="text-center p-8">
-                <p className="text-muted-foreground">
-                  {applications.length === 0 
-                    ? "Nuk ka aplikime për të shfaqur." 
-                    : "Asnjë aplikim i disponueshëm për filtrat e zgjedhur."}
-                </p>
-              </div>
-            ) : (
-              filteredApplications.map((application) => (
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {filteredApplications.map((application) => (
                 <ApplicationCardBase
                   key={application.id}
                   application={application}
@@ -388,7 +536,8 @@ export default function AdminAplikimet() {
                     fetchApplications();
                   }}
                 />
-              ))
+              ))}
+            </div>
           )}
         </div>
       )}
