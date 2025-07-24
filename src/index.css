@@ -9,7 +9,7 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Modern Institutional Design System */
-    --background: 50 100% 98%; /* #fffef9 - warm neutral base */
+    --background: 0 0% 100%; /* pure white background */
     --foreground: 232 11% 13%; /* #1d1e22 - typography base */
 
     --card: 0 0% 100%; /* pure white surface */
