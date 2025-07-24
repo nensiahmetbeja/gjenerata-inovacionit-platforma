@@ -35,7 +35,7 @@ export default function AdminAplikimet() {
   useEffect(() => {
     const checkUserRole = async () => {
       if (!user) {
-        navigate('/admin');
+        setLoading(false);
         return;
       }
 
@@ -46,10 +46,15 @@ export default function AdminAplikimet() {
           .eq('id', user.id)
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching profile:', error);
+          setLoading(false);
+          return;
+        }
 
         if (!profile || (profile.role !== 'ekzekutiv' && profile.role !== 'ekspert')) {
-          navigate('/admin');
+          console.warn('User does not have required role:', profile?.role);
+          setLoading(false);
           return;
         }
 
@@ -61,14 +66,13 @@ export default function AdminAplikimet() {
         }
       } catch (error) {
         console.error('Error checking user role:', error);
-        navigate('/admin');
       } finally {
         setLoading(false);
       }
     };
 
     checkUserRole();
-  }, [user, navigate]);
+  }, [user]);
 
   const fetchFilterOptions = async () => {
     try {
@@ -109,6 +113,36 @@ export default function AdminAplikimet() {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
           <p className="mt-2 text-muted-foreground">Duke ngarkuar...</p>
         </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Card className="w-full max-w-md">
+          <CardContent className="p-6 text-center">
+            <p className="text-muted-foreground mb-4">Duhet të jeni të kyçur për të hyrë në këtë faqe.</p>
+            <Button onClick={() => navigate('/admin?redirect=' + encodeURIComponent('/admin/aplikimet'))}>
+              Kthehu tek Hyrja
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!userRole || (userRole !== 'ekzekutiv' && userRole !== 'ekspert')) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Card className="w-full max-w-md">
+          <CardContent className="p-6 text-center">
+            <p className="text-muted-foreground mb-4">Nuk keni të drejta të mjaftueshme për të hyrë në këtë faqe.</p>
+            <Button onClick={() => navigate('/admin?redirect=' + encodeURIComponent('/admin/aplikimet'))}>
+              Kthehu tek Hyrja
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }

@@ -62,13 +62,19 @@ export default function AdminLogin() {
         return;
       }
 
-      // Success - redirect based on role
+      // Success - redirect based on role or intended destination
       toast({
         title: "Mirë se erdhe!",
         description: "Jeni futur me sukses si administrator.",
       });
       
-      if (profile.role === 'ekzekutiv') {
+      // Check if there's an intended destination in the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirect = urlParams.get('redirect');
+      
+      if (redirect && redirect.startsWith('/admin/')) {
+        navigate(redirect);
+      } else if (profile.role === 'ekzekutiv') {
         navigate('/admin/dashboard-ekzekutiv');
       } else if (profile.role === 'ekspert') {
         navigate('/admin/dashboard-ekspert');
