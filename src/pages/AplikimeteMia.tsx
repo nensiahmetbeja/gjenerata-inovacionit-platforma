@@ -276,8 +276,8 @@ const AplikimeteMia = () => {
             <ApplicationCardBase
               application={selectedApplication}
               commentPermissions={{
-                canView: true,
-                canWrite: true,
+                canView: false,
+                canWrite: false,
                 role: 'user'
               }}
             />
