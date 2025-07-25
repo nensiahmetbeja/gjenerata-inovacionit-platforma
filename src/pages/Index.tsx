@@ -60,7 +60,9 @@ const Index = () => {
       <header className="border-b bg-primary text-primary-foreground sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl text-primary-foreground/80 font-bold">Gjenerata e Inovacionit</h1>
+            <h1 className="text-xl text-primary-foreground/80 font-bold">        
+            <a href="/">
+            Gjenerata e Inovacionit</a></h1>
           </div>
           <div className="flex items-center gap-4">
             <div className="hidden sm:flex flex-col text-right">
