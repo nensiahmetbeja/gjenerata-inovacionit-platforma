@@ -64,11 +64,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    // Clear local state immediately
+    setSession(null);
+    setUser(null);
+    
     try {
-      await supabase.auth.signOut();
+      // Try to sign out from server, but don't worry if it fails
+      await supabase.auth.signOut({ scope: 'local' });
     } catch (error) {
-      // Ignore logout errors - session might already be expired
-      console.log('Logout error (ignored):', error);
+      // Silently ignore any logout errors since we've already cleared local state
     }
   };
 
