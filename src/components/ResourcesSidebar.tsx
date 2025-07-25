@@ -94,8 +94,7 @@ export const ResourcesSidebar = () => {
               className="w-full justify-between h-12 text-base"
             >
               <div className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5" />
-                📘 Këshilla dhe Inspirim
+                Këshilla dhe Inspirim
               </div>
               {isOpen ? (
                 <ChevronUp className="h-4 w-4" />
@@ -116,8 +115,7 @@ export const ResourcesSidebar = () => {
           <Card className="institutional-card">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-primary">
-                <BookOpen className="h-5 w-5" />
-                📘 Këshilla dhe Inspirim
+                Këshilla dhe Inspirim
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
@@ -167,9 +165,7 @@ const ResourcesContent = ({
                 <div className="flex items-start justify-between gap-2 mb-1">
                   <h4 className="font-medium text-sm leading-tight text-foreground group-hover:text-primary transition-colors">
                     {resource.title}
-                    {resource.popular && (
-                      <span className="ml-1 text-accent">⭐</span>
-                    )}
+                    {/* {resource.popular} */}
                   </h4>
                   <Badge 
                     variant="outline" 
@@ -193,7 +189,7 @@ const ResourcesContent = ({
 
       {/* Quick Tips */}
       <div className="mt-6 p-4 bg-primary/5 rounded-lg border border-primary/20">
-        <h5 className="font-medium text-sm text-primary mb-2">💡 Këshilla të shpejta</h5>
+        <h5 className="font-medium text-sm text-primary mb-2">Këshilla të shpejta</h5>
         <ul className="space-y-1 text-xs text-muted-foreground">
           <li>• Fokusohuni në problemin që zgjidhni</li>
           <li>• Tregoni se si ideja juaj është unike</li>

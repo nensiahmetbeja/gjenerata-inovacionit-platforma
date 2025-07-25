@@ -371,7 +371,7 @@ export const InnovationWorkspace = ({ onSubmissionSuccess }: InnovationWorkspace
               name="titulli"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base font-medium">Titulli i Projektit *</FormLabel>
+                  <FormLabel className="text-base font-medium">Titulli i Projektit * (min. 10 shkronja)</FormLabel>
                   <FormControl>
                     <Input 
                       placeholder="P.sh. Aplikacion për të ndihmuar nxënësit në zgjedhjen e karrierës..." 
@@ -596,13 +596,14 @@ export const InnovationWorkspace = ({ onSubmissionSuccess }: InnovationWorkspace
       {/* Welcome Section */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-4">
-          <Sparkles className="h-8 w-8 text-accent" />
           <h1 className="text-3xl md:text-4xl font-bold text-primary">
             Mirë se vini në Sallën e Inovacionit!
           </h1>
         </div>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Këtu fillon ideja juaj për të ndryshuar Shqipërinë.
+        Kjo platformë është krijuar për t’ju ndihmuar të sillni idetë tuaja më të mira në shërbim të publikut.
+Aplikoni, informohuni dhe përdorni mjetet në dispozicion për ta zhvilluar më tej projektin tuaj.
+
         </p>
       </div>
 

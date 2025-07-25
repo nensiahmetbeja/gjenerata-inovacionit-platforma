@@ -60,7 +60,7 @@ const Index = () => {
       <header className="border-b bg-primary text-primary-foreground sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold">Gjenerata e Inovacionit</h1>
+            <h1 className="text-xl text-primary-foreground/80 font-bold">Gjenerata e Inovacionit</h1>
           </div>
           <div className="flex items-center gap-4">
             <div className="hidden sm:flex flex-col text-right">
@@ -116,8 +116,8 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t bg-muted/30 mt-16">
         <div className="container mx-auto px-4 py-8">
-          <div className="text-center text-sm text-muted-foreground">
-            <p>© 2024 Gjenerata e Inovacionit. Një nismë për të ndryshuar të ardhmen.</p>
+          <div className="text-center  text-sm text-muted-foreground">
+            <p>© 2025x Gjenerata e Inovacionit. Një nismë për të ndryshuar të ardhmen.</p>
           </div>
         </div>
       </footer>
