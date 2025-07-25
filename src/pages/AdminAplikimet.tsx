@@ -91,9 +91,11 @@ export default function AdminAplikimet() {
 
         setUserRole(profile.role);
         
-        // Fetch filter options and applications for ekzekutiv users
+        // Fetch filter options for both roles
+        await fetchFilterOptions();
+        
+        // Fetch applications based on role
         if (profile.role === 'ekzekutiv') {
-          await fetchFilterOptions();
           await fetchApplications();
         } else if (profile.role === 'ekspert') {
           await fetchEkspertApplications();
@@ -326,215 +328,215 @@ export default function AdminAplikimet() {
           </Button>
         </div>
       </div>
-      {/* Filters for Ekzekutiv */}
-      {userRole === 'ekzekutiv' && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Search className="w-5 h-5" />
-              Filtro Aplikimet
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Title Search */}
+      {/* Filters Section */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Search className="w-5 h-5" />
+            Filtro Aplikimet
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Title Search */}
+          <div>
+            <label className="text-sm font-medium text-muted-foreground mb-2 block">
+              Titulli i Projektit
+            </label>
+            <Input
+              placeholder="Kërko sipas titullit..."
+              value={filters.titulli}
+              onChange={(e) => setFilters(prev => ({ ...prev, titulli: e.target.value }))}
+              className="w-full"
+            />
+          </div>
+
+          {/* Main Filters Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Innovation Field - Multi-select Dropdown */}
             <div>
               <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                Titulli i Projektit
+                Fusha e Inovacionit
               </label>
-              <Input
-                placeholder="Kërko sipas titullit..."
-                value={filters.titulli}
-                onChange={(e) => setFilters(prev => ({ ...prev, titulli: e.target.value }))}
-                className="w-full"
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full justify-between">
+                    {filters.fusha_ids.length > 0 
+                      ? `${filters.fusha_ids.length} të zgjedhura`
+                      : "Zgjedh fushat..."
+                    }
+                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Kërko fushat..." />
+                    <CommandList>
+                      <CommandEmpty>Nuk u gjend asgjë.</CommandEmpty>
+                      <CommandGroup>
+                        {filterOptions.fusha.map((fusha) => (
+                          <CommandItem
+                            key={fusha.id}
+                            onSelect={() => {
+                              if (filters.fusha_ids.includes(fusha.id)) {
+                                setFilters(prev => ({ 
+                                  ...prev, 
+                                  fusha_ids: prev.fusha_ids.filter(id => id !== fusha.id) 
+                                }));
+                              } else {
+                                setFilters(prev => ({ 
+                                  ...prev, 
+                                  fusha_ids: [...prev.fusha_ids, fusha.id] 
+                                }));
+                              }
+                            }}
+                          >
+                            <Check
+                              className={`mr-2 h-4 w-4 ${
+                                filters.fusha_ids.includes(fusha.id) ? "opacity-100" : "opacity-0"
+                              }`}
+                            />
+                            {fusha.label}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              {filters.fusha_ids.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {filters.fusha_ids.map(id => {
+                    const fusha = filterOptions.fusha.find(f => f.id === id);
+                    return fusha ? (
+                      <Badge key={id} variant="secondary" className="text-xs">
+                        {fusha.label}
+                        <X 
+                          className="ml-1 h-3 w-3 cursor-pointer" 
+                          onClick={() => setFilters(prev => ({ 
+                            ...prev, 
+                            fusha_ids: prev.fusha_ids.filter(fid => fid !== id) 
+                          }))}
+                        />
+                      </Badge>
+                    ) : null;
+                  })}
+                </div>
+              )}
             </div>
 
-            {/* Main Filters Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Innovation Field - Multi-select Dropdown */}
-              <div>
-                <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                  Fusha e Inovacionit
-                </label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-between">
-                      {filters.fusha_ids.length > 0 
-                        ? `${filters.fusha_ids.length} të zgjedhura`
-                        : "Zgjedh fushat..."
-                      }
-                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-0" align="start">
-                    <Command>
-                      <CommandInput placeholder="Kërko fushat..." />
-                      <CommandList>
-                        <CommandEmpty>Nuk u gjend asgjë.</CommandEmpty>
-                        <CommandGroup>
-                          {filterOptions.fusha.map((fusha) => (
-                            <CommandItem
-                              key={fusha.id}
-                              onSelect={() => {
-                                if (filters.fusha_ids.includes(fusha.id)) {
-                                  setFilters(prev => ({ 
-                                    ...prev, 
-                                    fusha_ids: prev.fusha_ids.filter(id => id !== fusha.id) 
-                                  }));
-                                } else {
-                                  setFilters(prev => ({ 
-                                    ...prev, 
-                                    fusha_ids: [...prev.fusha_ids, fusha.id] 
-                                  }));
-                                }
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  filters.fusha_ids.includes(fusha.id) ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              {fusha.label}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                {filters.fusha_ids.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {filters.fusha_ids.map(id => {
-                      const fusha = filterOptions.fusha.find(f => f.id === id);
-                      return fusha ? (
-                        <Badge key={id} variant="secondary" className="text-xs">
-                          {fusha.label}
-                          <X 
-                            className="ml-1 h-3 w-3 cursor-pointer" 
-                            onClick={() => setFilters(prev => ({ 
-                              ...prev, 
-                              fusha_ids: prev.fusha_ids.filter(fid => fid !== id) 
-                            }))}
-                          />
-                        </Badge>
-                      ) : null;
-                    })}
-                  </div>
-                )}
-              </div>
+            {/* Age Group */}
+            <div>
+              <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                Grupmosha
+              </label>
+              <Select value={filters.grupmosha} onValueChange={(value) => setFilters(prev => ({ ...prev, grupmosha: value }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Të gjitha" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Të gjitha</SelectItem>
+                  <SelectItem value="15-18">15-18 vjeç</SelectItem>
+                  <SelectItem value="19-25">19-25 vjeç</SelectItem>
+                  <SelectItem value="26-35">26-35 vjeç</SelectItem>
+                  <SelectItem value="36+">36+ vjeç</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-              {/* Age Group */}
-              <div>
-                <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                  Grupmosha
-                </label>
-                <Select value={filters.grupmosha} onValueChange={(value) => setFilters(prev => ({ ...prev, grupmosha: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Të gjitha" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Të gjitha</SelectItem>
-                    <SelectItem value="15-18">15-18 vjeç</SelectItem>
-                    <SelectItem value="19-25">19-25 vjeç</SelectItem>
-                    <SelectItem value="26-35">26-35 vjeç</SelectItem>
-                    <SelectItem value="36+">36+ vjeç</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            {/* Municipality */}
+            <div>
+              <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                Bashkia
+              </label>
+              <Select value={filters.bashkia_id} onValueChange={(value) => setFilters(prev => ({ ...prev, bashkia_id: value }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Të gjitha" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Të gjitha</SelectItem>
+                  {filterOptions.bashkia.map((bashkia) => (
+                    <SelectItem key={bashkia.id} value={bashkia.id}>
+                      {bashkia.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-              {/* Municipality */}
-              <div>
-                <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                  Bashkia
-                </label>
-                <Select value={filters.bashkia_id} onValueChange={(value) => setFilters(prev => ({ ...prev, bashkia_id: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Të gjitha" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Të gjitha</SelectItem>
-                    {filterOptions.bashkia.map((bashkia) => (
-                      <SelectItem key={bashkia.id} value={bashkia.id}>
-                        {bashkia.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            {/* Status - Multi-select Dropdown */}
+            <div>
+              <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                Statusi
+              </label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full justify-between">
+                    {filters.status_ids.length > 0 
+                      ? `${filters.status_ids.length} të zgjedhura`
+                      : "Zgjedh statuset..."
+                    }
+                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Kërko statuset..." />
+                    <CommandList>
+                      <CommandEmpty>Nuk u gjend asgjë.</CommandEmpty>
+                      <CommandGroup>
+                        {filterOptions.status.map((status) => (
+                          <CommandItem
+                            key={status.id}
+                            onSelect={() => {
+                              if (filters.status_ids.includes(status.id)) {
+                                setFilters(prev => ({ 
+                                  ...prev, 
+                                  status_ids: prev.status_ids.filter(id => id !== status.id) 
+                                }));
+                              } else {
+                                setFilters(prev => ({ 
+                                  ...prev, 
+                                  status_ids: [...prev.status_ids, status.id] 
+                                }));
+                              }
+                            }}
+                          >
+                            <Check
+                              className={`mr-2 h-4 w-4 ${
+                                filters.status_ids.includes(status.id) ? "opacity-100" : "opacity-0"
+                              }`}
+                            />
+                            {status.label}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              {filters.status_ids.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {filters.status_ids.map(id => {
+                    const status = filterOptions.status.find(s => s.id === id);
+                    return status ? (
+                      <Badge key={id} variant="secondary" className="text-xs">
+                        {status.label}
+                        <X 
+                          className="ml-1 h-3 w-3 cursor-pointer" 
+                          onClick={() => setFilters(prev => ({ 
+                            ...prev, 
+                            status_ids: prev.status_ids.filter(sid => sid !== id) 
+                          }))}
+                        />
+                      </Badge>
+                    ) : null;
+                  })}
+                </div>
+              )}
+            </div>
 
-              {/* Status - Multi-select Dropdown */}
-              <div>
-                <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                  Statusi
-                </label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-between">
-                      {filters.status_ids.length > 0 
-                        ? `${filters.status_ids.length} të zgjedhura`
-                        : "Zgjedh statuset..."
-                      }
-                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-0" align="start">
-                    <Command>
-                      <CommandInput placeholder="Kërko statuset..." />
-                      <CommandList>
-                        <CommandEmpty>Nuk u gjend asgjë.</CommandEmpty>
-                        <CommandGroup>
-                          {filterOptions.status.map((status) => (
-                            <CommandItem
-                              key={status.id}
-                              onSelect={() => {
-                                if (filters.status_ids.includes(status.id)) {
-                                  setFilters(prev => ({ 
-                                    ...prev, 
-                                    status_ids: prev.status_ids.filter(id => id !== status.id) 
-                                  }));
-                                } else {
-                                  setFilters(prev => ({ 
-                                    ...prev, 
-                                    status_ids: [...prev.status_ids, status.id] 
-                                  }));
-                                }
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${
-                                  filters.status_ids.includes(status.id) ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                              {status.label}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                {filters.status_ids.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {filters.status_ids.map(id => {
-                      const status = filterOptions.status.find(s => s.id === id);
-                      return status ? (
-                        <Badge key={id} variant="secondary" className="text-xs">
-                          {status.label}
-                          <X 
-                            className="ml-1 h-3 w-3 cursor-pointer" 
-                            onClick={() => setFilters(prev => ({ 
-                              ...prev, 
-                              status_ids: prev.status_ids.filter(sid => sid !== id) 
-                            }))}
-                          />
-                        </Badge>
-                      ) : null;
-                    })}
-                  </div>
-                )}
-              </div>
-
-              {/* Assigned Expert */}
+            {/* Assigned Expert - Only show for ekzekutiv */}
+            {userRole === 'ekzekutiv' && (
               <div>
                 <label className="text-sm font-medium text-muted-foreground mb-2 block">
                   Eksperti i caktuar
@@ -554,85 +556,73 @@ export default function AdminAplikimet() {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-            
-            <div className="flex items-center justify-between pt-4 border-t">
-              <div className="text-sm text-muted-foreground">
-                {filteredApplications.length !== applications.length && (
-                  <span>
-                    Shfaqen {filteredApplications.length} nga {applications.length} aplikime
-                  </span>
-                )}
-              </div>
-              <Button variant="outline" onClick={clearFilters} size="sm">
-                Pastro Filtrat
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Applications Table */}
-      {userRole === 'ekzekutiv' && (
-        <div>
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold">Menaxhimi i Aplikimeve</h2>
-            <p className="text-muted-foreground">
-              Menaxho statusin, cakto ekspertë dhe shto komente për aplikimet.
-            </p>
+            )}
           </div>
           
+          <div className="flex items-center justify-between pt-4 border-t">
+            <div className="text-sm text-muted-foreground">
+              {filteredApplications.length !== applications.length && (
+                <span>
+                  Shfaqen {filteredApplications.length} nga {applications.length} aplikime
+                </span>
+              )}
+            </div>
+            <Button variant="outline" onClick={clearFilters} size="sm">
+              Pastro Filtrat
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Applications Table/List */}
+      <div>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold">
+            {userRole === 'ekzekutiv' ? 'Menaxhimi i Aplikimeve' : 'Aplikimet e Caktuara'}
+          </h2>
+          <p className="text-muted-foreground">
+            {userRole === 'ekzekutiv' 
+              ? 'Menaxho statusin, cakto ekspertë dhe shto komente për aplikimet.'
+              : 'Shqyrto dhe komento aplikimet që t\'i janë caktuar.'
+            }
+          </p>
+        </div>
+        
+        {applications.length === 0 ? (
+          <div className="text-center p-8">
+            <p className="text-muted-foreground">
+              {userRole === 'ekspert' 
+                ? 'Asnjë aplikim i caktuar për ju ende.' 
+                : 'Asnjë aplikim i gjetur.'
+              }
+            </p>
+          </div>
+        ) : (
           <AplikimeTable
             applications={filteredApplications}
-            onUpdate={fetchApplications}
+            onUpdate={userRole === 'ekzekutiv' ? fetchApplications : fetchEkspertApplications}
             statusOptions={filterOptions.status}
             ekspertOptions={filterOptions.ekspertë}
+            userRole={userRole}
           />
-        </div>
-      )}
-      {userRole === 'ekspert' && (
-          <div className="space-y-6">
-            <div className="mb-4">
-              <h2 className="text-2xl font-bold">Aplikimet e Caktuara</h2>
-              <p className="text-muted-foreground">
-                Shqyrto dhe komento aplikimet që t'i janë caktuar.
-              </p>
-            </div>
-            
-            {applications.length === 0 ? (
-              <div className="text-center p-8">
-                <p className="text-muted-foreground">Asnjë aplikim i caktuar për ju ende.</p>
-              </div>
-            ) : (
-              applications.map((application) => (
-                <ApplicationCardBase
-                  key={application.id}
-                  application={application}
-                  canEditStatus={false}
-                  canAssignEkspert={false}
-                  commentPermissions={{ 
-                    canView: true, 
-                    canWrite: true, 
-                    role: 'ekspert' 
-                  }}
-                  onUpdate={() => {
-                    fetchEkspertApplications();
-                  }}
-                />
-              ))
-          )}
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 
+  // Use EkzekutivLayout for both roles to maintain consistent UI
   if (userRole === 'ekzekutiv') {
     return <EkzekutivLayout>{content}</EkzekutivLayout>;
   }
 
+  // For ekspert, use similar layout but without full admin features
   return (
     <div className="min-h-screen bg-background">
-      {content}
+      <div className="flex">
+        <div className="flex-1">
+          {content}
+        </div>
+      </div>
     </div>
   );
 }

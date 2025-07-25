@@ -48,6 +48,7 @@ interface AplikimeTableProps {
   onUpdate: () => void;
   statusOptions: StatusOption[];
   ekspertOptions: EkspertOption[];
+  userRole?: string;
 }
 
 const getStatusBadgeVariant = (status: string) => {
@@ -65,7 +66,7 @@ const getStatusBadgeVariant = (status: string) => {
   }
 };
 
-export default function AplikimeTable({ applications, onUpdate, statusOptions, ekspertOptions }: AplikimeTableProps) {
+export default function AplikimeTable({ applications, onUpdate, statusOptions, ekspertOptions, userRole = 'ekzekutiv' }: AplikimeTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [sortField, setSortField] = useState<string>('created_at');
@@ -211,12 +212,14 @@ export default function AplikimeTable({ applications, onUpdate, statusOptions, e
               <div className="text-sm text-muted-foreground">
                 <strong>Grupmosha:</strong> {application.grupmosha}
               </div>
-              <div className="text-sm text-muted-foreground">
-                <strong>Eksperti:</strong> {application.assigned_ekspert 
-                  ? `${application.assigned_ekspert.emri} ${application.assigned_ekspert.mbiemri}`
-                  : '–'
-                }
-              </div>
+              {userRole === 'ekzekutiv' && (
+                <div className="text-sm text-muted-foreground">
+                  <strong>Eksperti:</strong> {application.assigned_ekspert 
+                    ? `${application.assigned_ekspert.emri} ${application.assigned_ekspert.mbiemri}`
+                    : '–'
+                  }
+                </div>
+              )}
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="outline" size="sm" className="w-full mt-3">
@@ -227,22 +230,25 @@ export default function AplikimeTable({ applications, onUpdate, statusOptions, e
                 <SheetContent className="w-full overflow-y-auto">
                   <SheetHeader>
                     <SheetTitle>Detajet e Aplikimit</SheetTitle>
-                    <SheetDescription>
-                      Menaxho statusin dhe ekspertin e caktuar për këtë aplikim.
-                    </SheetDescription>
-                  </SheetHeader>
-                  <div className="mt-6">
-                    <ApplicationCardBase
-                      application={application}
-                      canEditStatus={true}
-                      canAssignEkspert={true}
-                      commentPermissions={{ 
-                        canView: true, 
-                        canWrite: true, 
-                        role: 'ekzekutiv' 
-                      }}
-                      onUpdate={onUpdate}
-                    />
+                  <SheetDescription>
+                    {userRole === 'ekzekutiv' 
+                      ? 'Menaxho statusin dhe ekspertin e caktuar për këtë aplikim.'
+                      : 'Shiqo detajet dhe komento për këtë aplikim.'
+                    }
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="mt-6">
+                  <ApplicationCardBase
+                    application={application}
+                    canEditStatus={userRole === 'ekzekutiv'}
+                    canAssignEkspert={userRole === 'ekzekutiv'}
+                    commentPermissions={{ 
+                      canView: true, 
+                      canWrite: true, 
+                      role: userRole === 'ekzekutiv' ? 'ekzekutiv' : 'ekspert'
+                    }}
+                    onUpdate={onUpdate}
+                  />
                   </div>
                 </SheetContent>
               </Sheet>
@@ -331,7 +337,7 @@ export default function AplikimeTable({ applications, onUpdate, statusOptions, e
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
               </TableHead>
-              <TableHead>Eksperti i Caktuar</TableHead>
+              {userRole === 'ekzekutiv' && <TableHead>Eksperti i Caktuar</TableHead>}
               <TableHead className="text-center">Veprime</TableHead>
             </TableRow>
           </TableHeader>
@@ -351,50 +357,64 @@ export default function AplikimeTable({ applications, onUpdate, statusOptions, e
                     {application.status?.label}
                   </Badge>
                 </TableCell>
-                <TableCell>
-                  {application.assigned_ekspert 
-                    ? `${application.assigned_ekspert.emri} ${application.assigned_ekspert.mbiemri}`
-                    : '–'
-                  }
-                </TableCell>
+                {userRole === 'ekzekutiv' && (
+                  <TableCell>
+                    {application.assigned_ekspert 
+                      ? `${application.assigned_ekspert.emri} ${application.assigned_ekspert.mbiemri}`
+                      : '–'
+                    }
+                  </TableCell>
+                )}
                 <TableCell>
                   <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openApplicationDetail(application)}
-                    >
-                      <Eye className="w-4 h-4 mr-1" />
-                      Shiko
-                    </Button>
-                    
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm">
-                          <MoreHorizontal className="w-4 h-4" />
+                    {userRole === 'ekzekutiv' ? (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => openApplicationDetail(application)}
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          Shiko
                         </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => openApplicationDetail(application)}>
-                          Shiko Detaje
-                        </DropdownMenuItem>
-                        
-                        {/* Quick Status Change */}
-                        {statusOptions.map((status) => (
-                          <DropdownMenuItem
-                            key={status.id}
-                            onClick={() => handleStatusChange(application.id, status.id)}
-                          >
-                            Ndrysho në: {status.label}
-                          </DropdownMenuItem>
-                        ))}
-                        
-                        {/* Quick Expert Assignment */}
-                        <DropdownMenuItem onClick={() => handleEkspertAssignment(application.id, 'unassign')}>
-                          Hiq ekspertin
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <MoreHorizontal className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => openApplicationDetail(application)}>
+                              Shiko Detaje
+                            </DropdownMenuItem>
+                            
+                            {/* Quick Status Change */}
+                            {statusOptions.map((status) => (
+                              <DropdownMenuItem
+                                key={status.id}
+                                onClick={() => handleStatusChange(application.id, status.id)}
+                              >
+                                Ndrysho në: {status.label}
+                              </DropdownMenuItem>
+                            ))}
+                            
+                            {/* Quick Expert Assignment */}
+                            <DropdownMenuItem onClick={() => handleEkspertAssignment(application.id, 'unassign')}>
+                              Hiq ekspertin
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </>
+                    ) : (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => openApplicationDetail(application)}
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        Shiko
+                      </Button>
+                    )}
                   </div>
                 </TableCell>
               </TableRow>
@@ -477,12 +497,12 @@ export default function AplikimeTable({ applications, onUpdate, statusOptions, e
           {selectedApplication && (
             <ApplicationCardBase
               application={selectedApplication}
-              canEditStatus={true}
-              canAssignEkspert={true}
+              canEditStatus={userRole === 'ekzekutiv'}
+              canAssignEkspert={userRole === 'ekzekutiv'}
               commentPermissions={{ 
                 canView: true, 
                 canWrite: true, 
-                role: 'ekzekutiv' 
+                role: userRole === 'ekzekutiv' ? 'ekzekutiv' : 'ekspert'
               }}
               onUpdate={() => {
                 onUpdate();
