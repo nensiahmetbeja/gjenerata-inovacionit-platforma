@@ -77,7 +77,7 @@ export default function AdminLogin() {
       } else if (profile.role === 'ekzekutiv') {
         navigate('/admin/dashboard-ekzekutiv');
       } else if (profile.role === 'ekspert') {
-        navigate('/admin/dashboard-ekspert');
+        navigate('/admin/aplikimet');
       }
     } catch (err) {
       setError('Qasja e kufizuar: Ky përdorues nuk ka të drejta administrimi.');
