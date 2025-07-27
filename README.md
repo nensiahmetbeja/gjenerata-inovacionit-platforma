@@ -107,11 +107,11 @@
 
 ---
 
-## Instalimi lokalisht (opsional)
+## Instalimi lokalisht
 
 ```bash
-git clone <your_git_url>
-cd <your_project_folder>
+git clone https://github.com/nensiahmetbeja/gjenerata-inovacionit-platforma.git
+cd gjenerata-inovacionit-platforma
 
 npm install
 npm run dev
