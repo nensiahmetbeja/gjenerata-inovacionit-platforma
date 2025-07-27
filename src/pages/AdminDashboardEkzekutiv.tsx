@@ -66,20 +66,20 @@ export default function AdminDashboardEkzekutiv() {
         }, {} as Record<string, number>);
 
         const applicationsByField = applications.reduce((acc, app) => {
-          const fieldLabel = app.fusha?.label || 'Unknown';
-          acc[fieldLabel] = (acc[fieldLabel] || 0) + 1;
+          const fieldId = app.fusha_id;
+          acc[fieldId] = (acc[fieldId] || 0) + 1;
           return acc;
         }, {} as Record<string, number>);
 
         const applicationsByMunicipality = applications.reduce((acc, app) => {
-          const municipalityLabel = app.bashkia?.label || 'Unknown';
-          acc[municipalityLabel] = (acc[municipalityLabel] || 0) + 1;
+          const municipalityId = app.bashkia_id;
+          acc[municipalityId] = (acc[municipalityId] || 0) + 1;
           return acc;
         }, {} as Record<string, number>);
 
         const applicationsByStatus = applications.reduce((acc, app) => {
-          const statusLabel = app.status?.label || 'Unknown';
-          acc[statusLabel] = (acc[statusLabel] || 0) + 1;
+          const statusId = app.status_id;
+          acc[statusId] = (acc[statusId] || 0) + 1;
           return acc;
         }, {} as Record<string, number>);
 
@@ -226,7 +226,7 @@ export default function AdminDashboardEkzekutiv() {
                       : kpiData.applicationsByField[filters.field] || 0}
                   </p>
                   <p className="text-muted-foreground">
-                    {filters.field === 'all' ? 'Të gjitha fushat' : filters.field}
+                    {filters.field === 'all' ? 'Të gjitha fushat' : referenceData.fusha.find(f => f.id === filters.field)?.label || 'Unknown'}
                   </p>
                 </div>
               </CardContent>
@@ -249,7 +249,7 @@ export default function AdminDashboardEkzekutiv() {
                       : kpiData.applicationsByMunicipality[filters.municipality] || 0}
                   </p>
                   <p className="text-muted-foreground">
-                    {filters.municipality === 'all' ? 'Të gjitha bashkitë' : filters.municipality}
+                    {filters.municipality === 'all' ? 'Të gjitha bashkitë' : referenceData.bashkia.find(b => b.id === filters.municipality)?.label || 'Unknown'}
                   </p>
                 </div>
               </CardContent>
@@ -272,7 +272,7 @@ export default function AdminDashboardEkzekutiv() {
                       : kpiData.applicationsByStatus[filters.status] || 0}
                   </p>
                   <p className="text-muted-foreground">
-                    {filters.status === 'all' ? 'Të gjitha statuset' : filters.status}
+                    {filters.status === 'all' ? 'Të gjitha statuset' : referenceData.status.find(s => s.id === filters.status)?.label || 'Unknown'}
                   </p>
                 </div>
               </CardContent>
