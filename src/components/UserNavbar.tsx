@@ -20,7 +20,7 @@ export function UserNavbar() {
   };
 
   const navItems = [
-    { path: '/', label: 'Dorëzo një Ide' },
+    { path: '/', label: 'Dorëzo një ide' },
     { path: '/aplikimet', label: 'Aplikimet' },
   ];
 

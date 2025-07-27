@@ -3,7 +3,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { ApplicationStatusBadge } from '@/components/ui/application-status-badge';
 import { Button } from '@/components/ui/button';
 import { 
@@ -164,14 +163,14 @@ const AplikimeteMia = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Aplikimet e Mia</h1>
+            <h1 className="text-3xl font-bold text-foreground">Aplikimet</h1>
             <p className="text-muted-foreground mt-2">
               Këtu mund të shikoni të gjitha aplikimet që keni dorëzuar
             </p>
           </div>
           <Button onClick={() => navigate('/')} className="gap-2">
             <Plus className="h-4 w-4" />
-            Aplikim i Ri
+            Aplikim i ri
           </Button>
         </div>
 
@@ -185,7 +184,7 @@ const AplikimeteMia = () => {
               </p>
               <Button onClick={() => navigate('/')} className="gap-2">
                 <Plus className="h-4 w-4" />
-                Aplikim i Ri
+                Aplikim i ri
               </Button>
             </CardContent>
           </Card>
@@ -195,7 +194,7 @@ const AplikimeteMia = () => {
             <div className="hidden md:block">
               <Card>
                 <CardHeader>
-                  <CardTitle>Të Gjitha Aplikimet ({applications.length})</CardTitle>
+                  <CardTitle>Të gjitha aplikimet ({applications.length})</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Table>

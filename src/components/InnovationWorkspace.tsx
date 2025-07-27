@@ -373,7 +373,7 @@ export const InnovationWorkspace = ({ onSubmissionSuccess }: InnovationWorkspace
               name="titulli"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base font-medium">Titulli i Projektit * (min. 10 shkronja)</FormLabel>
+                  <FormLabel className="text-base font-medium">Titulli i projektit * (min. 10 shkronja)</FormLabel>
                   <FormControl>
                     <Input 
                       placeholder="P.sh. Aplikacion për të ndihmuar nxënësit në zgjedhjen e karrierës..." 
@@ -391,7 +391,7 @@ export const InnovationWorkspace = ({ onSubmissionSuccess }: InnovationWorkspace
               name="pershkrimi"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base font-medium">Përshkrimi i Projektit * (min. 100 fjalë)</FormLabel>
+                  <FormLabel className="text-base font-medium">Përshkrimi i projektit * (min. 100 fjalë)</FormLabel>
                   <FormControl>
                     <Textarea 
                       placeholder="Përshkruani idenë ose projektin tuaj me detaje. Tregoni problemin që zgjidhni, sesi funksionon ideja juaj dhe çfarë ndikimi do të ketë..." 
@@ -417,7 +417,7 @@ export const InnovationWorkspace = ({ onSubmissionSuccess }: InnovationWorkspace
           <div className="space-y-6">
             <div className="text-center mb-6">
               <Users className="mx-auto h-12 w-12 text-accent mb-3" />
-              <h3 className="text-xl font-semibold text-primary mb-2">Detaje të Aplikantit dhe Ndikimi</h3>
+              <h3 className="text-xl font-semibold text-primary mb-2">Detaje të aplikantit dhe ndikimi</h3>
               <p className="text-muted-foreground">Specifikoni kategorinë dhe target grupet</p>
             </div>
 
@@ -426,7 +426,7 @@ export const InnovationWorkspace = ({ onSubmissionSuccess }: InnovationWorkspace
               name="fusha_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base font-medium">Tema/Fusha e Inovacionit *</FormLabel>
+                  <FormLabel className="text-base font-medium">Tema/Fusha *</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <FushaDropdown 
@@ -447,7 +447,7 @@ export const InnovationWorkspace = ({ onSubmissionSuccess }: InnovationWorkspace
               name="grupmosha"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base font-medium">Grupmosha e Aplikantit *</FormLabel>
+                  <FormLabel className="text-base font-medium">Grupmosha *</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Select onValueChange={field.onChange} value={field.value}>

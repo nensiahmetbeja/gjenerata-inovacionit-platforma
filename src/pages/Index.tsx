@@ -137,7 +137,7 @@ const Index = () => {
       <footer className="border-t bg-muted/30 mt-16">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center  text-sm text-muted-foreground">
-            <p>© 2025x Gjenerata e Inovacionit. Një nismë për të ndryshuar të ardhmen.</p>
+            <p>© 2025 Gjenerata e Inovacionit. Një nismë për të ndryshuar të ardhmen.</p>
           </div>
         </div>
       </footer>

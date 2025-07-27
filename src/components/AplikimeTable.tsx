@@ -294,7 +294,7 @@ export default function AplikimeTable({ applications, onUpdate, statusOptions, e
             <TableRow>
               <TableHead>
                 <Button variant="ghost" onClick={() => handleSort('titulli')} className="h-auto p-0 font-semibold">
-                  Titulli i Projektit
+                  Titulli i projektit
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
               </TableHead>
