@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { ExternalLink, FileText, User, Download, Edit2, Trash2, Check, X, Lightbulb } from "lucide-react";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -26,7 +27,7 @@ interface ApplicationData {
   assigned_ekspert_id?: string;
   fusha?: { label: string };
   bashkia?: { label: string };
-  status?: { label: string };
+  status?: { label: string; color_badge?: string };
 }
 
 interface CommentPermissions {
@@ -80,7 +81,7 @@ export default function ApplicationCardBase({
     const fetchStatusOptions = async () => {
       const { data } = await supabase
         .from('status')
-        .select('*')
+        .select('id, label, color_badge')
         .order('label');
       if (data) setStatusOptions(data);
     };
@@ -608,7 +609,10 @@ export default function ApplicationCardBase({
                 </SelectContent>
               </Select>
             ) : (
-              <Badge>{application.status?.label}</Badge>
+              <StatusBadge 
+                label={application.status?.label || ''} 
+                color={application.status?.color_badge} 
+              />
             )}
           </div>
 

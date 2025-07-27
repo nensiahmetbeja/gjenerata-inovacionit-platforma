@@ -175,14 +175,17 @@ export type Database = {
       }
       status: {
         Row: {
+          color_badge: string | null
           id: string
           label: string
         }
         Insert: {
+          color_badge?: string | null
           id?: string
           label: string
         }
         Update: {
+          color_badge?: string | null
           id?: string
           label?: string
         }
