@@ -2,10 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { EkzekutivLayout } from '@/components/EkzekutivLayout';
+import { GrupMoshaDropdown } from '@/components/filters/GrupMoshaDropdown';
+import { FushaDropdown } from '@/components/filters/FushaDropdown';
+import { BashkiaDropdown } from '@/components/filters/BashkiaDropdown';
+import { StatusDropdown } from '@/components/filters/StatusDropdown';
 
 interface KPIData {
   totalApplications: number;
@@ -190,17 +193,10 @@ export default function AdminDashboardEkzekutiv() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <Select value={filters.ageGroup} onValueChange={(value) => setFilters({...filters, ageGroup: value})}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Zgjidhni grupmoshën" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Të gjitha grupet</SelectItem>
-                      {Object.keys(kpiData.applicationsByAgeGroup).map((ageGroup) => (
-                        <SelectItem key={ageGroup} value={ageGroup}>{ageGroup}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <GrupMoshaDropdown 
+                    value={filters.ageGroup} 
+                    onValueChange={(value) => setFilters({...filters, ageGroup: value})} 
+                  />
                   <p className="text-2xl font-bold">
                     {filters.ageGroup === 'all' 
                       ? kpiData.totalApplications 
@@ -220,17 +216,10 @@ export default function AdminDashboardEkzekutiv() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <Select value={filters.field} onValueChange={(value) => setFilters({...filters, field: value})}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Zgjidhni fushën" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Të gjitha fushat</SelectItem>
-                      {Object.keys(kpiData.applicationsByField).map((field) => (
-                        <SelectItem key={field} value={field}>{field}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FushaDropdown 
+                    value={filters.field} 
+                    onValueChange={(value) => setFilters({...filters, field: value})} 
+                  />
                   <p className="text-2xl font-bold">
                     {filters.field === 'all' 
                       ? kpiData.totalApplications 
@@ -250,17 +239,10 @@ export default function AdminDashboardEkzekutiv() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <Select value={filters.municipality} onValueChange={(value) => setFilters({...filters, municipality: value})}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Zgjidhni bashkinë" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Të gjitha bashkitë</SelectItem>
-                      {Object.keys(kpiData.applicationsByMunicipality).map((municipality) => (
-                        <SelectItem key={municipality} value={municipality}>{municipality}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <BashkiaDropdown 
+                    value={filters.municipality} 
+                    onValueChange={(value) => setFilters({...filters, municipality: value})} 
+                  />
                   <p className="text-2xl font-bold">
                     {filters.municipality === 'all' 
                       ? kpiData.totalApplications 
@@ -280,17 +262,10 @@ export default function AdminDashboardEkzekutiv() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <Select value={filters.status} onValueChange={(value) => setFilters({...filters, status: value})}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Zgjidhni statusin" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Të gjitha statuset</SelectItem>
-                      {Object.keys(kpiData.applicationsByStatus).map((status) => (
-                        <SelectItem key={status} value={status}>{status}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <StatusDropdown 
+                    value={filters.status} 
+                    onValueChange={(value) => setFilters({...filters, status: value})} 
+                  />
                   <p className="text-2xl font-bold">
                     {filters.status === 'all' 
                       ? kpiData.totalApplications 
