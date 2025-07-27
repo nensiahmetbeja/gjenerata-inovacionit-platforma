@@ -21,6 +21,7 @@ interface KPIData {
 export default function AdminDashboardEkzekutiv() {
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
   const [kpiData, setKpiData] = useState<KPIData>({
     totalApplications: 0,
     applicationsByAgeGroup: {},
@@ -124,7 +125,7 @@ export default function AdminDashboardEkzekutiv() {
       try {
         const { data: profile, error } = await supabase
           .from('profiles')
-          .select('role')
+          .select('emri, mbiemri, role')
           .eq('id', user.id)
           .single();
 
@@ -133,7 +134,7 @@ export default function AdminDashboardEkzekutiv() {
           return;
         }
 
-        setUserRole(profile.role);
+        setUserName(profile.emri + ' ' + profile.mbiemri);
         
         // Fetch data after access is confirmed
         await Promise.all([fetchKPIData(), fetchReferenceData()]);
@@ -167,7 +168,7 @@ export default function AdminDashboardEkzekutiv() {
           <div className="flex justify-between items-center mb-8">
             <div>
               <h1 className="text-3xl font-bold text-foreground">Dashboard Ekzekutiv</h1>
-              <p className="text-muted-foreground mt-2">Mirë se erdhe, {userRole}</p>
+              <p className="text-muted-foreground mt-2">Mirë se erdhe, {userName}</p>
             </div>
             <Button variant="outline" onClick={handleSignOut}>
               Dil
