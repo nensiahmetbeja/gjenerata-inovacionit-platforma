@@ -21,7 +21,7 @@ export function UserNavbar() {
 
   const navItems = [
     { path: '/', label: 'Dorëzo një Ide' },
-    { path: '/aplikimet', label: 'Aplikimet e Mia' },
+    { path: '/aplikimet', label: 'Aplikimet' },
   ];
 
   return (
@@ -35,7 +35,7 @@ export function UserNavbar() {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
+          {/* User Info, Nav Items & Logout - Desktop */}
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <Link
@@ -51,21 +51,17 @@ export function UserNavbar() {
                 {item.label}
               </Link>
             ))}
-          </div>
-
-          {/* User Info & Logout - Desktop */}
-          <div className="hidden md:flex items-center space-x-4">
-            <div className="text-right">
+            {/* <div className="flex flex-col items-end ml-4">
               <div className="text-sm font-medium text-[#fffef9]">
                 {user?.user_metadata?.emri} {user?.user_metadata?.mbiemri}
               </div>
               <div className="text-xs text-[#fffef9]/80">Aplikant</div>
-            </div>
+            </div> */}
             <Button
               onClick={signOut}
               variant="ghost"
               size="sm"
-              className="text-[#fffef9] hover:text-[#d4af37] hover:bg-[#fffef9]/10"
+              className="text-[#fffef9] hover:text-[#d4af37] hover:bg-[#fffef9]/10 ml-4"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Dil
@@ -104,18 +100,19 @@ export function UserNavbar() {
                   {item.label}
                 </Link>
               ))}
-              
-              {/* Mobile User Info & Logout */}
-              <div className="px-3 py-2 border-t border-[#fffef9]/20 mt-3">
-                <div className="text-sm font-medium text-[#fffef9] mb-1">
-                  {user?.user_metadata?.emri} {user?.user_metadata?.mbiemri}
-                </div>
-                <div className="text-xs text-[#fffef9]/80 mb-3">Aplikant</div>
+              {/* Mobile User Info & Logout in a row */}
+              <div className="flex items-center justify-between px-3 py-2 border-t border-[#fffef9]/20 mt-3">
+                {/* <div>
+                  <div className="text-sm font-medium text-[#fffef9]">
+                    {user?.user_metadata?.emri} {user?.user_metadata?.mbiemri}
+                  </div>
+                  <div className="text-xs text-[#fffef9]/80">Aplikant</div>
+                </div> */}
                 <Button
                   onClick={signOut}
                   variant="ghost"
                   size="sm"
-                  className="w-full justify-start text-[#fffef9] hover:text-[#d4af37] hover:bg-[#fffef9]/10"
+                  className="text-[#fffef9] hover:text-[#d4af37] hover:bg-[#fffef9]/10"
                 >
                   <LogOut className="h-4 w-4 mr-2" />
                   Dil

@@ -17,6 +17,7 @@ import { Eye, Plus } from 'lucide-react';
 import ApplicationCardBase from '@/components/ApplicationCardBase';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { UserNavbar } from '@/components/UserNavbar';
 
 interface Application {
   id: string;
@@ -170,22 +171,8 @@ const AplikimeteMia = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-primary text-primary-foreground sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <h1 className="text-xl text-primary-foreground/80 font-bold">
-              <a href="/">Gjenerata e Inovacionit</a>
-            </h1>
-          </div>
-          <Button 
-            variant="secondary" 
-            onClick={() => navigate('/')}
-            size="sm"
-          >
-            Kryefaqja
-          </Button>
-        </div>
-      </header>
+      <UserNavbar />
+
 
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">

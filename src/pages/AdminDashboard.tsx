@@ -70,7 +70,7 @@ export default function AdminDashboard() {
           <div>
             <h1 className="text-2xl font-bold">Paneli i Administratorit</h1>
             <p className="text-sm text-muted-foreground">
-              Mirë se erdhe, {userRole === 'ekzekutiv' ? 'Ekzekutiv' : 'Ekspert'}
+            Përmbledhje e aplikimeve dhe aktivitetit të fundit.
             </p>
           </div>
           <Button onClick={handleSignOut} variant="outline">

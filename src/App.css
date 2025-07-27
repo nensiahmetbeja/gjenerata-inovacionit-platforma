@@ -40,3 +40,57 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Custom cursor styles */
+@media (pointer: fine) {
+  html, body {
+    cursor: none !important;
+  }
+  
+  .custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #142657;
+    border-radius: 50%;
+    background: rgba(20,38,87,0.08);
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.18s cubic-bezier(.4,0,.2,1), background 0.18s;
+    mix-blend-mode: multiply;
+  }
+  .custom-cursor--active {
+    background: #142657;
+    transform: scale(1.25);
+    border: 2px solid #142657;
+  }
+  .custom-cursor-trail {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(20,38,87,0.12);
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.25;
+    transition: transform 0.4s cubic-bezier(.4,0,.2,1), opacity 0.4s;
+    mix-blend-mode: multiply;
+  }
+}
+
+@media (pointer: coarse) {
+  html, body {
+    cursor: auto !important;
+  }
+}
+
+/* Accessibility: prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .custom-cursor, .custom-cursor-trail {
+    transition: none !important;
+  }
+}
