@@ -14,6 +14,7 @@ import { X, Search, Check, ChevronDown } from "lucide-react";
 import ApplicationCardBase from '@/components/ApplicationCardBase';
 import AplikimeTable from '@/components/AplikimeTable';
 import { EkzekutivLayout } from '@/components/EkzekutivLayout';
+import { EkspertLayout } from '@/components/EkspertLayout';
 import { GrupMoshaDropdown } from '@/components/filters/GrupMoshaDropdown';
 import { BashkiaDropdown } from '@/components/filters/BashkiaDropdown';
 
@@ -595,19 +596,11 @@ export default function AdminAplikimet() {
     </div>
   );
 
-  // Use EkzekutivLayout for both roles to maintain consistent UI
+  // Use appropriate layout for each role
   if (userRole === 'ekzekutiv') {
     return <EkzekutivLayout>{content}</EkzekutivLayout>;
   }
 
-  // For ekspert, use similar layout but without full admin features
-  return (
-    <div className="min-h-screen bg-background">
-      <div className="flex">
-        <div className="flex-1">
-          {content}
-        </div>
-      </div>
-    </div>
-  );
+  // For ekspert, use EkspertLayout with sidebar
+  return <EkspertLayout>{content}</EkspertLayout>;
 }
