@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Badge } from "@/components/ui/badge";
+import { ApplicationStatusBadge } from "@/components/ui/application-status-badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -51,20 +52,6 @@ interface AplikimeTableProps {
   userRole?: string;
 }
 
-const getStatusBadgeVariant = (status: string) => {
-  switch (status?.toLowerCase()) {
-    case 'i ri':
-      return 'default';
-    case 'në shqyrtim':
-      return 'secondary';
-    case 'i aprovuar':
-      return 'default';
-    case 'i refuzuar':
-      return 'destructive';
-    default:
-      return 'outline';
-  }
-};
 
 export default function AplikimeTable({ applications, onUpdate, statusOptions, ekspertOptions, userRole = 'ekzekutiv' }: AplikimeTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -200,9 +187,7 @@ export default function AplikimeTable({ applications, onUpdate, statusOptions, e
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <CardTitle className="text-base line-clamp-2">{application.titulli}</CardTitle>
-                <Badge variant={getStatusBadgeVariant(application.status?.label || '')}>
-                  {application.status?.label}
-                </Badge>
+                <ApplicationStatusBadge statusId={application.status_id} />
               </div>
             </CardHeader>
             <CardContent className="space-y-2">
@@ -353,9 +338,7 @@ export default function AplikimeTable({ applications, onUpdate, statusOptions, e
                 <TableCell>{application.bashkia?.label}</TableCell>
                 <TableCell>{application.grupmosha}</TableCell>
                 <TableCell>
-                  <Badge variant={getStatusBadgeVariant(application.status?.label || '')}>
-                    {application.status?.label}
-                  </Badge>
+                  <ApplicationStatusBadge statusId={application.status_id} />
                 </TableCell>
                 {userRole === 'ekzekutiv' && (
                   <TableCell>

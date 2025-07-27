@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { ApplicationStatusBadge } from '@/components/ui/application-status-badge';
 import { Button } from '@/components/ui/button';
 import { 
   Table, 
@@ -129,20 +130,6 @@ const AplikimeteMia = () => {
     }
   };
 
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'i ri':
-        return 'default';
-      case 'në shqyrtim':
-        return 'secondary';
-      case 'miratuar':
-        return 'default';
-      case 'refuzuar':
-        return 'destructive';
-      default:
-        return 'outline';
-    }
-  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('sq-AL', {
@@ -232,9 +219,7 @@ const AplikimeteMia = () => {
                           <TableCell>{application.bashkia?.label}</TableCell>
                           <TableCell>{formatDate(application.created_at)}</TableCell>
                           <TableCell>
-                            <Badge variant={getStatusBadgeVariant(application.status?.label)}>
-                              {application.status?.label}
-                            </Badge>
+                            <ApplicationStatusBadge statusId={application.status_id} />
                           </TableCell>
                           <TableCell>
                             <Button
@@ -265,12 +250,10 @@ const AplikimeteMia = () => {
                         <h3 className="font-semibold text-sm leading-tight">
                           {application.titulli}
                         </h3>
-                        <Badge 
-                          variant={getStatusBadgeVariant(application.status?.label)}
+                        <ApplicationStatusBadge 
+                          statusId={application.status_id}
                           className="text-xs"
-                        >
-                          {application.status?.label}
-                        </Badge>
+                        />
                       </div>
                       
                       <div className="space-y-2 text-sm text-muted-foreground">

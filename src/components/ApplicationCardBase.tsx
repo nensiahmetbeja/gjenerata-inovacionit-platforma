@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { ApplicationStatusBadge } from "@/components/ui/application-status-badge";
 import { ExternalLink, FileText, User, Download, Edit2, Trash2, Check, X, Lightbulb } from "lucide-react";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -608,7 +609,7 @@ export default function ApplicationCardBase({
                 </SelectContent>
               </Select>
             ) : (
-              <Badge>{application.status?.label}</Badge>
+              <ApplicationStatusBadge statusId={application.status_id} />
             )}
           </div>
 
