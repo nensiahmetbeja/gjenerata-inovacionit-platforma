@@ -19,7 +19,7 @@ interface Application {
   assigned_ekspert_id?: string;
   fusha?: { label: string };
   bashkia?: { label: string };
-  status?: { label: string; color_badge?: string };
+  status?: { label: string };
 }
 
 export default function ApplicationCardEkspert() {
@@ -37,7 +37,7 @@ export default function ApplicationCardEkspert() {
           *,
           fusha (label),
           bashkia (label),
-          status (label, color_badge)
+          status (label)
         `)
         .eq('assigned_ekspert_id', user.id)
         .order('created_at', { ascending: false });
