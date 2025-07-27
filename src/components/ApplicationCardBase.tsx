@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, FileText, User, Download, Edit2, Trash2, Check, X } from "lucide-react";
+import { ExternalLink, FileText, User, Download, Edit2, Trash2, Check, X, Lightbulb } from "lucide-react";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from "@/hooks/use-toast";
@@ -51,6 +51,8 @@ interface ApplicationNote {
   created_by: string;
   created_at: string;
   profiles?: { emri: string; mbiemri: string };
+  suggested_status_id?: string;
+  suggested_status?: { label: string };
 }
 
 export default function ApplicationCardBase({
@@ -69,6 +71,8 @@ export default function ApplicationCardBase({
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentContent, setEditingCommentContent] = useState('');
+  const [selectedStatusProposal, setSelectedStatusProposal] = useState('');
+  const [isSubmittingProposal, setIsSubmittingProposal] = useState(false);
 
   // Fetch status options
   useEffect(() => {
@@ -79,8 +83,8 @@ export default function ApplicationCardBase({
         .order('label');
       if (data) setStatusOptions(data);
     };
-    if (canEditStatus) fetchStatusOptions();
-  }, [canEditStatus]);
+    if (canEditStatus || commentPermissions.role === 'ekspert') fetchStatusOptions();
+  }, [canEditStatus, commentPermissions.role]);
 
   // Fetch ekspert options
   useEffect(() => {
@@ -108,9 +112,11 @@ export default function ApplicationCardBase({
 
       if (error) throw error;
 
-      // Fetch profiles for each note separately
+      // Fetch profiles and status info for each note separately
       const commentsWithProfiles = await Promise.all(
         (notesData || []).map(async (note: any) => {
+          let noteWithProfile = { ...note, profiles: null, suggested_status: null };
+          
           if (note.created_by) {
             const { data: profile } = await supabase
               .from('profiles')
@@ -118,9 +124,26 @@ export default function ApplicationCardBase({
               .eq('id', note.created_by)
               .single();
             
-            return { ...note, profiles: profile };
+            noteWithProfile.profiles = profile;
           }
-          return { ...note, profiles: null };
+
+          // If it's a status suggestion, fetch the suggested status label
+          if (note.note_type === 'status_suggestion' && note.content.includes('Propozim për të kaluar në statusin:')) {
+            const statusMatch = note.content.match(/status_id:(\w+)/);
+            if (statusMatch) {
+              const statusId = statusMatch[1];
+              const { data: status } = await supabase
+                .from('status')
+                .select('label')
+                .eq('id', statusId)
+                .single();
+              
+              noteWithProfile.suggested_status = status;
+              noteWithProfile.suggested_status_id = statusId;
+            }
+          }
+          
+          return noteWithProfile;
         })
       );
 
@@ -413,6 +436,100 @@ export default function ApplicationCardBase({
     }
   };
 
+  const handleStatusProposal = async () => {
+    if (!selectedStatusProposal || !commentPermissions.canWrite || commentPermissions.role !== 'ekspert') return;
+    
+    setIsSubmittingProposal(true);
+    try {
+      const selectedStatus = statusOptions.find(s => s.id === selectedStatusProposal);
+      
+      const { error } = await supabase
+        .from('application_notes' as any)
+        .insert({
+          application_id: application.id,
+          content: `Propozim për të kaluar në statusin: ${selectedStatus?.label} (status_id:${selectedStatusProposal})`,
+          note_type: 'status_suggestion',
+          role: commentPermissions.role,
+          created_by: user?.id
+        });
+
+      if (error) throw error;
+
+      setSelectedStatusProposal('');
+      toast({
+        title: "Propozimi u dërgua",
+        description: "Propozimi u dërgua tek ekzekutivi."
+      });
+
+      // Refresh comments
+      const { data: notesData, error: fetchError } = await supabase
+        .from('application_notes' as any)
+        .select('*')
+        .eq('application_id', application.id)
+        .order('created_at', { ascending: false });
+      
+      if (!fetchError && notesData) {
+        const commentsWithProfiles = await Promise.all(
+          notesData.map(async (note: any) => {
+            let noteWithProfile = { ...note, profiles: null, suggested_status: null };
+            
+            if (note.created_by) {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('emri, mbiemri')
+                .eq('id', note.created_by)
+                .single();
+              
+              noteWithProfile.profiles = profile;
+            }
+
+            if (note.note_type === 'status_suggestion' && note.content.includes('Propozim për të kaluar në statusin:')) {
+              const statusMatch = note.content.match(/status_id:(\w+)/);
+              if (statusMatch) {
+                const statusId = statusMatch[1];
+                const { data: status } = await supabase
+                  .from('status')
+                  .select('label')
+                  .eq('id', statusId)
+                  .single();
+                
+                noteWithProfile.suggested_status = status;
+                noteWithProfile.suggested_status_id = statusId;
+              }
+            }
+            
+            return noteWithProfile;
+          })
+        );
+        setComments(commentsWithProfiles as unknown as ApplicationNote[]);
+      }
+    } catch (error) {
+      console.error('Error submitting status proposal:', error);
+      toast({
+        title: "Gabim gjatë dërgimit",
+        description: "Ka ndodhur një gabim gjatë dërgimit të propozimit",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmittingProposal(false);
+    }
+  };
+
+  const handleApproveStatusProposal = async (suggestedStatusId: string) => {
+    if (!canEditStatus) return;
+    
+    try {
+      await handleStatusChange(suggestedStatusId);
+      
+      toast({
+        title: "Propozimi u pranua",
+        description: "Statusi u ndryshua sipas propozimit të ekspertit"
+      });
+    } catch (error) {
+      console.error('Error approving status proposal:', error);
+    }
+  };
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -531,6 +648,40 @@ export default function ApplicationCardBase({
               </Select>
             </div>
           )}
+
+          {/* Status Proposal for Ekspert */}
+          {commentPermissions.role === 'ekspert' && statusOptions.length > 0 && (
+            <div>
+              <h4 className="font-medium text-sm text-muted-foreground mb-2">Propozo një status të ri</h4>
+              <div className="flex gap-2">
+                <Select 
+                  value={selectedStatusProposal} 
+                  onValueChange={setSelectedStatusProposal}
+                  disabled={isSubmittingProposal}
+                >
+                  <SelectTrigger className="flex-1">
+                    <SelectValue placeholder="Zgjedh statusin e propozuar" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {statusOptions
+                      .filter(status => status.id !== application.status_id)
+                      .map((status) => (
+                        <SelectItem key={status.id} value={status.id}>
+                          {status.label}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+                <Button 
+                  onClick={handleStatusProposal}
+                  disabled={!selectedStatusProposal || isSubmittingProposal}
+                  size="sm"
+                >
+                  {isSubmittingProposal ? "Duke dërguar..." : "Dërgo"}
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Comments Section */}
@@ -560,20 +711,29 @@ export default function ApplicationCardBase({
 
               <div className="space-y-3 max-h-60 overflow-y-auto">
                 {comments.map((comment) => (
-                  <div key={comment.id} className="p-3 border rounded-md space-y-2">
+                  <div key={comment.id} className={`p-3 border rounded-md space-y-2 ${comment.note_type === 'status_suggestion' ? 'border-orange-200 bg-orange-50' : ''}`}>
                     <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-muted-foreground" />
+                      {comment.note_type === 'status_suggestion' ? (
+                        <Lightbulb className="h-4 w-4 text-orange-500" />
+                      ) : (
+                        <User className="h-4 w-4 text-muted-foreground" />
+                      )}
                       <span className="text-xs font-medium">
                         {comment.profiles?.emri} {comment.profiles?.mbiemri}
                       </span>
                       <Badge variant="outline" className="text-xs">
                         {comment.role}
                       </Badge>
+                      {comment.note_type === 'status_suggestion' && (
+                        <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">
+                          💡 Propozim Statusi
+                        </Badge>
+                      )}
                       <span className="text-xs text-muted-foreground ml-auto">
                         {new Date(comment.created_at).toLocaleDateString('sq-AL')} {new Date(comment.created_at).toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })}
                       </span>
-                      {/* Edit/Delete buttons for own comments */}
-                      {comment.created_by === user?.id && (
+                      {/* Edit/Delete buttons for own comments (not for status suggestions) */}
+                      {comment.created_by === user?.id && comment.note_type !== 'status_suggestion' && (
                         <div className="flex items-center gap-1 ml-2">
                           {editingCommentId === comment.id ? (
                             <>
@@ -621,7 +781,30 @@ export default function ApplicationCardBase({
                         className="min-h-[60px] text-sm"
                       />
                     ) : (
-                      <p className="text-sm leading-relaxed">{comment.content}</p>
+                      <div className="space-y-2">
+                        {comment.note_type === 'status_suggestion' ? (
+                          <div className="space-y-2">
+                            <p className="text-sm font-medium text-orange-800">
+                              Propozim për Ndryshim Statusi nga Eksperti: {comment.suggested_status?.label}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Dërguar më: {new Date(comment.created_at).toLocaleDateString('sq-AL')} në {new Date(comment.created_at).toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                            {canEditStatus && comment.suggested_status_id && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleApproveStatusProposal(comment.suggested_status_id!)}
+                                className="mt-2"
+                              >
+                                Prano
+                              </Button>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="text-sm leading-relaxed">{comment.content}</p>
+                        )}
+                      </div>
                     )}
                   </div>
                 ))}
