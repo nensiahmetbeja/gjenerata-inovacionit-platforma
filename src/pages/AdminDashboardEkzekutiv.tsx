@@ -174,109 +174,99 @@ export default function AdminDashboardEkzekutiv() {
             </Button>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {/* Total Applications */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Numri Total i Aplikimeve</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-bold">{kpiData.totalApplications}</p>
-                <p className="text-muted-foreground">Të gjitha aplikimet</p>
-              </CardContent>
-            </Card>
+          {/* KPI Cards Section */}
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 mb-10">
+            {/* Total Applications Card */}
+            <div
+              className="bg-white rounded-xl shadow-md p-6 relative group transition-transform duration-150 hover:scale-[1.03] hover:border hover:border-[#c6a14b] cursor-pointer outline-none focus:ring-2 focus:ring-[#c6a14b]"
+              tabIndex={0}
+              role="button"
+              aria-label="Numri Total i Aplikimeve"
+            >
+              <div className="text-sm font-semibold text-[#142657] mb-2">Numri Total i Aplikimeve</div>
+              <div className="text-4xl font-extrabold text-[#142657]">{kpiData.totalApplications}</div>
+              <div className="text-xs text-muted-foreground mt-2">Të gjitha aplikimet</div>
+            </div>
+          </div>
 
+          {/* Section Header for grouped KPIs */}
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-[#142657] tracking-wide">Aplikime sipas kategorisë</h2>
+            <div className="h-px bg-muted/30 mt-2" />
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
             {/* Applications by Age Group */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Aplikimet për Grupmoshë</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <GrupMoshaDropdown 
-                    value={filters.ageGroup} 
-                    onValueChange={(value) => setFilters({...filters, ageGroup: value})} 
-                  />
-                  <p className="text-2xl font-bold">
-                    {filters.ageGroup === 'all' 
-                      ? kpiData.totalApplications 
-                      : kpiData.applicationsByAgeGroup[filters.ageGroup] || 0}
-                  </p>
-                  <p className="text-muted-foreground">
-                    {filters.ageGroup === 'all' ? 'Të gjitha grupet' : filters.ageGroup}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <div
+              className="bg-white rounded-xl shadow-md p-6 relative group transition-transform duration-150 hover:scale-[1.03] hover:border hover:border-[#c6a14b] cursor-pointer outline-none focus:ring-2 focus:ring-[#c6a14b]"
+              tabIndex={0}
+              role="button"
+              aria-label="Aplikime sipas Grupmoshës"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-sm font-semibold text-[#142657]">Aplikime sipas Grupmoshës</div>
+                <GrupMoshaDropdown 
+                  value={filters.ageGroup} 
+                  onValueChange={(value) => setFilters({...filters, ageGroup: value})} 
+                />
+              </div>
+              <div className="text-3xl font-extrabold text-[#142657]">{filters.ageGroup === 'all' ? kpiData.totalApplications : kpiData.applicationsByAgeGroup[filters.ageGroup] || 0}</div>
+              <div className="text-xs text-muted-foreground mt-2">{filters.ageGroup === 'all' ? 'Të gjitha grupet' : filters.ageGroup}</div>
+            </div>
 
             {/* Applications by Field */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Aplikimet për Fushë</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <FushaDropdown 
-                    value={filters.field} 
-                    onValueChange={(value) => setFilters({...filters, field: value})} 
-                  />
-                  <p className="text-2xl font-bold">
-                    {filters.field === 'all' 
-                      ? kpiData.totalApplications 
-                      : kpiData.applicationsByField[filters.field] || 0}
-                  </p>
-                  <p className="text-muted-foreground">
-                    {filters.field === 'all' ? 'Të gjitha fushat' : referenceData.fusha.find(f => f.id === filters.field)?.label || 'Unknown'}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <div
+              className="bg-white rounded-xl shadow-md p-6 relative group transition-transform duration-150 hover:scale-[1.03] hover:border hover:border-[#c6a14b] cursor-pointer outline-none focus:ring-2 focus:ring-[#c6a14b]"
+              tabIndex={0}
+              role="button"
+              aria-label="Aplikime sipas Fushës"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-sm font-semibold text-[#142657]">Aplikime sipas Fushës</div>
+                <FushaDropdown 
+                  value={filters.field} 
+                  onValueChange={(value) => setFilters({...filters, field: value})} 
+                />
+              </div>
+              <div className="text-3xl font-extrabold text-[#142657]">{filters.field === 'all' ? kpiData.totalApplications : kpiData.applicationsByField[filters.field] || 0}</div>
+              <div className="text-xs text-muted-foreground mt-2">{filters.field === 'all' ? 'Të gjitha fushat' : referenceData.fusha.find(f => f.id === filters.field)?.label || 'Unknown'}</div>
+            </div>
 
             {/* Applications by Municipality */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Aplikimet për Bashki</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <BashkiaDropdown 
-                    value={filters.municipality} 
-                    onValueChange={(value) => setFilters({...filters, municipality: value})} 
-                  />
-                  <p className="text-2xl font-bold">
-                    {filters.municipality === 'all' 
-                      ? kpiData.totalApplications 
-                      : kpiData.applicationsByMunicipality[filters.municipality] || 0}
-                  </p>
-                  <p className="text-muted-foreground">
-                    {filters.municipality === 'all' ? 'Të gjitha bashkitë' : referenceData.bashkia.find(b => b.id === filters.municipality)?.label || 'Unknown'}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <div
+              className="bg-white rounded-xl shadow-md p-6 relative group transition-transform duration-150 hover:scale-[1.03] hover:border hover:border-[#c6a14b] cursor-pointer outline-none focus:ring-2 focus:ring-[#c6a14b]"
+              tabIndex={0}
+              role="button"
+              aria-label="Aplikime sipas Bashkisë"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-sm font-semibold text-[#142657]">Aplikime sipas Bashkisë</div>
+                <BashkiaDropdown 
+                  value={filters.municipality} 
+                  onValueChange={(value) => setFilters({...filters, municipality: value})} 
+                />
+              </div>
+              <div className="text-3xl font-extrabold text-[#142657]">{filters.municipality === 'all' ? kpiData.totalApplications : kpiData.applicationsByMunicipality[filters.municipality] || 0}</div>
+              <div className="text-xs text-muted-foreground mt-2">{filters.municipality === 'all' ? 'Të gjitha bashkitë' : referenceData.bashkia.find(b => b.id === filters.municipality)?.label || 'Unknown'}</div>
+            </div>
 
             {/* Applications by Status */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Aplikimet për Status</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <StatusDropdown 
-                    value={filters.status} 
-                    onValueChange={(value) => setFilters({...filters, status: value})} 
-                  />
-                  <p className="text-2xl font-bold">
-                    {filters.status === 'all' 
-                      ? kpiData.totalApplications 
-                      : kpiData.applicationsByStatus[filters.status] || 0}
-                  </p>
-                  <p className="text-muted-foreground">
-                    {filters.status === 'all' ? 'Të gjitha statuset' : referenceData.status.find(s => s.id === filters.status)?.label || 'Unknown'}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <div
+              className="bg-white rounded-xl shadow-md p-6 relative group transition-transform duration-150 hover:scale-[1.03] hover:border hover:border-[#c6a14b] cursor-pointer outline-none focus:ring-2 focus:ring-[#c6a14b]"
+              tabIndex={0}
+              role="button"
+              aria-label="Aplikime sipas Statusit"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-sm font-semibold text-[#142657]">Aplikime sipas Statusit</div>
+                <StatusDropdown 
+                  value={filters.status} 
+                  onValueChange={(value) => setFilters({...filters, status: value})} 
+                />
+              </div>
+              <div className="text-3xl font-extrabold text-[#142657]">{filters.status === 'all' ? kpiData.totalApplications : kpiData.applicationsByStatus[filters.status] || 0}</div>
+              <div className="text-xs text-muted-foreground mt-2">{filters.status === 'all' ? 'Të gjitha statuset' : referenceData.status.find(s => s.id === filters.status)?.label || 'Unknown'}</div>
+            </div>
           </div>
         </div>
       </div>
