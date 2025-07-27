@@ -72,21 +72,38 @@
 |--------------------|-------------------------------------------------------------|
 | `profiles`         | Info përdoruesi + role (`user`, `ekzekutiv`, `ekspert`)     |
 | `applications`     | Aplikimet e dorëzuara nga qytetarët                         |
-| `statuses`         | Lista e statuseve me ngjyrat për badge                      |
-| `fields`           | Fushat e inovacionit (arsimi, turizëm, drejtësi, etj.)      |
+| `status`           | Lista e statuseve me ngjyrat për badge (`color_badge`)      |
+| `fusha`            | Fushat e inovacionit (arsimi, turizëm, drejtësi, etj.)      |
 | `bashkia`          | Lista e bashkive                                            |
 | `application_notes`| Komente dhe sugjerime të brendshme                          |
 | `status_history`   | Historia e çdo ndryshimi statusi                            |
+
+### RLS (Row Level Security)
+- **Ekzekutiv**: Akses i plotë mbi të gjitha aplikimet
+- **Ekspert**: Akses vetëm mbi aplikimet e caktuara (`assigned_ekspert_id`)
+- **User**: Akses vetëm mbi aplikimet e veta (`user_id`)
 
 ---
 
 ## Komponentët kryesorë UI
 
-- `ApplicationForm`: Formulari kryesor i dorëzimit
-- `ApplicationCard`: Kartë për aplikim (variantet për role)
-- `ApplicationStatusBadge`: Tregon statusin me ngjyrë përkatëse
-- `SidebarLayout`: Layout i ripërdorshëm për ekspert dhe ekzekutiv
-- `DashboardKPIs`: Komponent i dashboard-it të ekzekutivit
+### Layout dhe Navigim
+- `AdminLayout`: Layout i ripërdorshëm për admin panel
+- `AdminSidebar`: Sidebar i ripërdorshëm për ekzekutiv dhe ekspert
+- `EkzekutivLayout`: Layout specifik për ekzekutiv (dashboard + aplikimet)
+- `EkspertLayout`: Layout specifik për ekspert (vetëm aplikimet)
+- `UserNavbar`: Navigation bar për përdoruesit
+
+### Aplikime dhe Status
+- `ApplicationCardBase`: Kartë bazë për aplikime (e ripërdorshme)
+- `ApplicationCardEkzekutiv`: Logjika për kartën e ekzekutivit
+- `ApplicationCardEkspert`: Logjika për kartën e ekspertit
+- `ApplicationStatusBadge`: Badge dinamik me ngjyrë nga databaza
+- `AplikimeTable`: Tabelë për shfaqjen e aplikimeve
+- `SubmissionSummary`: Përmbledhje e dorëzimit
+
+### Filtrime
+- `StatusDropdown`, `FushaDropdown`, `BashkiaDropdown`, `GrupMoshaDropdown`
 
 ---
 
