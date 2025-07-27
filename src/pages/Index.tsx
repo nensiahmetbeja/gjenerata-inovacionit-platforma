@@ -112,16 +112,10 @@ const Index = () => {
             {/* Navigation */}
             <nav className="hidden md:flex items-center gap-6">
               <a 
-                href="/" 
-                className="text-primary-foreground/80 hover:text-primary-foreground transition-colors font-medium"
-              >
-                Aplikim i Ri
-              </a>
-              <a 
                 href="/aplikimet" 
                 className="text-primary-foreground/80 hover:text-primary-foreground transition-colors font-medium"
               >
-                Aplikimet e Mia
+                Aplikimet e meparshme
               </a>
             </nav>
 
