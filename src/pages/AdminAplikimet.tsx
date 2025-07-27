@@ -14,6 +14,8 @@ import { X, Search, Check, ChevronDown } from "lucide-react";
 import ApplicationCardBase from '@/components/ApplicationCardBase';
 import AplikimeTable from '@/components/AplikimeTable';
 import { EkzekutivLayout } from '@/components/EkzekutivLayout';
+import { GrupMoshaDropdown } from '@/components/filters/GrupMoshaDropdown';
+import { BashkiaDropdown } from '@/components/filters/BashkiaDropdown';
 
 interface Application {
   id: string;
@@ -429,18 +431,10 @@ export default function AdminAplikimet() {
               <label className="text-sm font-medium text-muted-foreground mb-2 block">
                 Grupmosha
               </label>
-              <Select value={filters.grupmosha} onValueChange={(value) => setFilters(prev => ({ ...prev, grupmosha: value }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Të gjitha" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Të gjitha</SelectItem>
-                  <SelectItem value="15-18">15-18 vjeç</SelectItem>
-                  <SelectItem value="19-25">19-25 vjeç</SelectItem>
-                  <SelectItem value="26-35">26-35 vjeç</SelectItem>
-                  <SelectItem value="36+">36+ vjeç</SelectItem>
-                </SelectContent>
-              </Select>
+              <GrupMoshaDropdown 
+                value={filters.grupmosha} 
+                onValueChange={(value) => setFilters(prev => ({ ...prev, grupmosha: value }))} 
+              />
             </div>
 
             {/* Municipality */}
@@ -448,19 +442,10 @@ export default function AdminAplikimet() {
               <label className="text-sm font-medium text-muted-foreground mb-2 block">
                 Bashkia
               </label>
-              <Select value={filters.bashkia_id} onValueChange={(value) => setFilters(prev => ({ ...prev, bashkia_id: value }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Të gjitha" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Të gjitha</SelectItem>
-                  {filterOptions.bashkia.map((bashkia) => (
-                    <SelectItem key={bashkia.id} value={bashkia.id}>
-                      {bashkia.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <BashkiaDropdown 
+                value={filters.bashkia_id} 
+                onValueChange={(value) => setFilters(prev => ({ ...prev, bashkia_id: value }))} 
+              />
             </div>
 
             {/* Status - Multi-select Dropdown */}

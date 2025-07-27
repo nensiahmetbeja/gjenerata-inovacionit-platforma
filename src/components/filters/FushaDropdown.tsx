@@ -5,9 +5,11 @@ import { supabase } from '@/integrations/supabase/client';
 interface FushaDropdownProps {
   value: string;
   onValueChange: (value: string) => void;
+  placeholder?: string;
+  showAll?: boolean;
 }
 
-export function FushaDropdown({ value, onValueChange }: FushaDropdownProps) {
+export function FushaDropdown({ value, onValueChange, placeholder = "Zgjidhni fushën", showAll = true }: FushaDropdownProps) {
   const [options, setOptions] = useState<Array<{ value: string; label: string }>>([]);
 
   useEffect(() => {
@@ -25,11 +27,24 @@ export function FushaDropdown({ value, onValueChange }: FushaDropdownProps) {
     fetchFusha();
   }, []);
 
+  if (!showAll) {
+    // For forms, use regular Select without "all" option
+    return (
+      <FilterDropdown
+        value={value}
+        onValueChange={onValueChange}
+        placeholder={placeholder}
+        options={options}
+        allLabel="" // No "all" option
+      />
+    );
+  }
+
   return (
     <FilterDropdown
       value={value}
       onValueChange={onValueChange}
-      placeholder="Zgjidhni fushën"
+      placeholder={placeholder}
       options={options}
       allLabel="Të gjitha fushat"
     />

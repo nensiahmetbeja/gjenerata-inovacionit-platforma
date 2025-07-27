@@ -21,7 +21,9 @@ export function FilterDropdown({
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="all">{allLabel}</SelectItem>
+        {allLabel && (
+          <SelectItem value="all">{allLabel}</SelectItem>
+        )}
         {options.map((option) => (
           <SelectItem key={option.value} value={option.value}>
             {option.label}

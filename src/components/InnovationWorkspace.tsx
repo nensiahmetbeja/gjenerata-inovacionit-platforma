@@ -13,6 +13,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { FushaDropdown } from '@/components/filters/FushaDropdown';
+import { BashkiaDropdown } from '@/components/filters/BashkiaDropdown';
 import { 
   Upload, 
   X, 
@@ -425,20 +427,16 @@ export const InnovationWorkspace = ({ onSubmissionSuccess }: InnovationWorkspace
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-base font-medium">Tema/Fusha e Inovacionit *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="h-12 text-base">
-                        <SelectValue placeholder="Zgjidhni fushën ku përshtatet ideja juaj" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {fushaOptions.map((option) => (
-                        <SelectItem key={option.id} value={option.id}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <div className="relative">
+                      <FushaDropdown 
+                        value={field.value || ''} 
+                        onValueChange={field.onChange}
+                        placeholder="Zgjidhni fushën ku përshtatet ideja juaj"
+                        showAll={false}
+                      />
+                    </div>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -450,20 +448,20 @@ export const InnovationWorkspace = ({ onSubmissionSuccess }: InnovationWorkspace
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-base font-medium">Grupmosha e Aplikantit *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="h-12 text-base">
-                        <SelectValue placeholder="Zgjidhni grupmoshën tuaj" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {grupmoshaOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <div className="relative">
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger className="h-12 text-base">
+                          <SelectValue placeholder="Zgjidhni grupmoshën tuaj" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Nxënës (15-18 vjeç)">Nxënës (15-18 vjeç)</SelectItem>
+                          <SelectItem value="Studentë (19-24 vjeç)">Studentë (19-24 vjeç)</SelectItem>
+                          <SelectItem value="Profesionistë (25-29 vjeç)">Profesionistë (25-29 vjeç)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -475,20 +473,16 @@ export const InnovationWorkspace = ({ onSubmissionSuccess }: InnovationWorkspace
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-base font-medium">Bashkia *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="h-12 text-base">
-                        <SelectValue placeholder="Zgjidhni bashkinë ku jetoni" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {bashkiaOptions.map((option) => (
-                        <SelectItem key={option.id} value={option.id}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <div className="relative">
+                      <BashkiaDropdown 
+                        value={field.value || ''} 
+                        onValueChange={field.onChange}
+                        placeholder="Zgjidhni bashkinë ku jetoni"
+                        showAll={false}
+                      />
+                    </div>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

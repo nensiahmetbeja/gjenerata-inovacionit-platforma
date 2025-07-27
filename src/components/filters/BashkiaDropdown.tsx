@@ -5,9 +5,11 @@ import { supabase } from '@/integrations/supabase/client';
 interface BashkiaDropdownProps {
   value: string;
   onValueChange: (value: string) => void;
+  placeholder?: string;
+  showAll?: boolean;
 }
 
-export function BashkiaDropdown({ value, onValueChange }: BashkiaDropdownProps) {
+export function BashkiaDropdown({ value, onValueChange, placeholder = "Zgjidhni bashkinë", showAll = true }: BashkiaDropdownProps) {
   const [options, setOptions] = useState<Array<{ value: string; label: string }>>([]);
 
   useEffect(() => {
@@ -25,11 +27,24 @@ export function BashkiaDropdown({ value, onValueChange }: BashkiaDropdownProps) 
     fetchBashkia();
   }, []);
 
+  if (!showAll) {
+    // For forms, use regular Select without "all" option
+    return (
+      <FilterDropdown
+        value={value}
+        onValueChange={onValueChange}
+        placeholder={placeholder}
+        options={options}
+        allLabel="" // No "all" option
+      />
+    );
+  }
+
   return (
     <FilterDropdown
       value={value}
       onValueChange={onValueChange}
-      placeholder="Zgjidhni bashkinë"
+      placeholder={placeholder}
       options={options}
       allLabel="Të gjitha bashkitë"
     />
