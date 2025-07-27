@@ -597,7 +597,7 @@ export const InnovationWorkspace = ({ onSubmissionSuccess }: InnovationWorkspace
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-4">
           <h1 className="text-3xl md:text-4xl font-bold text-primary">
-            Mirë se vini në Sallën e Inovacionit!
+            Mirë se vini!
           </h1>
         </div>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -664,17 +664,6 @@ Aplikoni, informohuni dhe përdorni mjetet në dispozicion për ta zhvilluar më
                       Kthehu
                     </Button>
                   )}
-                  
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={saveDraft}
-                    disabled={isDraft}
-                    className="flex items-center gap-2"
-                  >
-                    <Save className="h-4 w-4" />
-                    {isDraft ? 'U ruajt...' : 'Ruaj Draftin'}
-                  </Button>
                 </div>
 
                 <div className="flex-1" />
