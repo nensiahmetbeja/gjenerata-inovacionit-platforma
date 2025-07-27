@@ -1,73 +1,100 @@
-# Welcome to your Lovable project
+# Gjenerata e inovacionit: Platforma kombëtare për idetë rinore
 
-## Project info
+> Një platformë digjitale interaktive që fuqizon të rinjtë për të dorëzuar idetë dhe projektet e tyre për përmirësimin e shërbimeve publike në Shqipëri.
 
-**URL**: https://lovable.dev/projects/daa7ef3a-6be0-4bd9-9372-c7512661bad3
+---
 
-## How can I edit this code?
+## Access instructions
 
-There are several ways of editing your application.
+### Përdorues (Qytetarë)
+- **Login/Signup URL**: `/auth`
+- Mundëson dorëzimin e aplikimeve dhe shikimin e historikut personal
 
-**Use Lovable**
+| Email            | Password   |
+|------------------|------------|
+| `user@test.com`  | `12345678` |
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/daa7ef3a-6be0-4bd9-9372-c7512661bad3) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+### Admin panel
 
-**Use your preferred IDE**
+#### Ekzekutiv
+- **Login URL**: `/admin`
+- Ka akses të plotë mbi të gjitha aplikimet, KPI, statistika dhe menaxhim statusesh/ekspertësh
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+| Email               | Password   |
+|---------------------|------------|
+| `ekzekutiv@test.com` | `12345678` |
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+#### Ekspert
+- **Login URL**: `/admin`
+- Ka akses vetëm mbi aplikimet që i janë caktuar dhe mund të japë komente dhe sugjerime për ndryshimin e statusit
 
-Follow these steps:
+| Email             | Password   |
+|-------------------|------------|
+| `ekspert@test.com` | `12345678` |
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+---
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## Teknologjitë kryesore
 
-# Step 3: Install the necessary dependencies.
-npm i
+- Vite + React + TypeScript
+- Tailwind CSS + shadcn/ui
+- Supabase (Auth, DB, Storage)
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+---
+
+## Strukturë e platformës
+
+### Përdorues
+- Faqe mirëseardhje + hyrje / regjistrim
+- Formë interaktive për dorëzim ideje
+- Dropdown dinamik për: fusha, bashki, grupmosha
+- Ngarkim dokumentesh (DOC, PDF, MOV, etj.)
+- Seksion “Aplikimet e Mia” për ndjekje të statusit
+
+### Admin – Ekzekutiv
+- Dashboard me KPI: sipas statusit, grupmoshës, fushës, bashkisë
+- Tabela dhe karta për menaxhimin e aplikimeve
+- Filtrim dhe kërkim i avancuar
+- Caktim ekspertësh dhe ndryshim statusesh
+
+### Admin – Ekspert
+- Pamje vetëm për aplikimet që i janë caktuar
+- Komente të brendshme në aplikim
+- Propozim për ndryshim statusi
+
+---
+
+## Struktura e bazës së të dhënave
+
+| Table              | Përshkrim                                                  |
+|--------------------|-------------------------------------------------------------|
+| `profiles`         | Info përdoruesi + role (`user`, `ekzekutiv`, `ekspert`)     |
+| `applications`     | Aplikimet e dorëzuara nga qytetarët                         |
+| `statuses`         | Lista e statuseve me ngjyrat për badge                      |
+| `fields`           | Fushat e inovacionit (arsimi, turizëm, drejtësi, etj.)      |
+| `bashkia`          | Lista e bashkive                                            |
+| `application_notes`| Komente dhe sugjerime të brendshme                          |
+| `status_history`   | Historia e çdo ndryshimi statusi                            |
+
+---
+
+## Komponentët kryesorë UI
+
+- `ApplicationForm`: Formulari kryesor i dorëzimit
+- `ApplicationCard`: Kartë për aplikim (variantet për role)
+- `ApplicationStatusBadge`: Tregon statusin me ngjyrë përkatëse
+- `SidebarLayout`: Layout i ripërdorshëm për ekspert dhe ekzekutiv
+- `DashboardKPIs`: Komponent i dashboard-it të ekzekutivit
+
+---
+
+## Instalimi lokalisht (opsional)
+
+```bash
+git clone <your_git_url>
+cd <your_project_folder>
+
+npm install
 npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/daa7ef3a-6be0-4bd9-9372-c7512661bad3) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
