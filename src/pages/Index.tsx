@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { InnovationWorkspace } from '@/components/InnovationWorkspace';
 import { ResourcesSidebar } from '@/components/ResourcesSidebar';
 import { SubmissionSummary } from '@/components/SubmissionSummary';
-import { LogOut } from 'lucide-react';
+import { UserNavbar } from '@/components/UserNavbar';
 import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
@@ -99,33 +99,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-primary text-primary-foreground sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <h1 className="text-xl text-primary-foreground/80 font-bold">        
-            <a href="/">
-            Gjenerata e Inovacionit</a></h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex flex-col text-right">
-              <span className="text-sm font-medium">
-                {user.user_metadata?.emri} {user.user_metadata?.mbiemri}
-              </span>
-              <span className="text-xs text-primary-foreground/80">Aplikant</span>
-            </div>
-            <Button 
-              onClick={signOut} 
-              variant="secondary" 
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <LogOut className="h-4 w-4" />
-              <span className="hidden sm:inline">Dil</span>
-            </Button>
-          </div>
-        </div>
-      </header>
+      {/* Navbar */}
+      <UserNavbar />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
