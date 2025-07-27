@@ -41,7 +41,7 @@ const Index = () => {
 
           // Redirect admin users to their appropriate dashboards
           if (profile?.role === 'ekzekutiv') {
-            navigate('/admin/dashboard-ekzekutiv');
+            navigate('/admin/dashboard');
             return;
           } else if (profile?.role === 'ekspert') {
             navigate('/admin/aplikimet');
@@ -124,7 +124,7 @@ const Index = () => {
                 onClick={handleNewSubmission} 
                 variant="outline" 
                 size="lg"
-                className="btn-institutional"
+                className="btn-institutional text-black"
               >
                 Dorëzoni një aplikim të ri
               </Button>
@@ -137,7 +137,7 @@ const Index = () => {
       <footer className="border-t bg-muted/30 mt-16">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center  text-sm text-muted-foreground">
-            <p>© 2025 Gjenerata e Inovacionit. Një nismë për të ndryshuar të ardhmen.</p>
+            <p>© 2025 Gjenerata e Inovacionit. Bashkëkrijojmë administratën e së ardhmes.</p>
           </div>
         </div>
       </footer>

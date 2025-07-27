@@ -115,7 +115,7 @@ export const ResourcesSidebar = () => {
           <Card className="institutional-card">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-primary">
-                Këshilla dhe Inspirim
+                Referenca: 
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">

@@ -73,7 +73,7 @@ const AplikimeteMia = () => {
 
           // Redirect admin users to their appropriate dashboards
           if (profile?.role === 'ekzekutiv') {
-            navigate('/admin/dashboard-ekzekutiv');
+            navigate('/admin/dashboard');
             return;
           } else if (profile?.role === 'ekspert') {
             navigate('/admin/aplikimet');

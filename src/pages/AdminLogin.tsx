@@ -75,7 +75,7 @@ export default function AdminLogin() {
       if (redirect && redirect.startsWith('/admin/')) {
         navigate(redirect);
       } else if (profile.role === 'ekzekutiv') {
-        navigate('/admin/dashboard-ekzekutiv');
+        navigate('/admin/dashboard');
       } else if (profile.role === 'ekspert') {
         navigate('/admin/aplikimet');
       }

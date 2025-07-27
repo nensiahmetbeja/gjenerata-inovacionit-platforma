@@ -71,7 +71,7 @@ export default function Auth() {
 
           // Redirect based on role
           if (profile?.role === 'ekzekutiv') {
-            navigate('/admin/dashboard-ekzekutiv');
+            navigate('/admin/dashboard');
           } else if (profile?.role === 'ekspert') {
             navigate('/admin/aplikimet');
           } else if (profile?.role === 'admin') {

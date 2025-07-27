@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 
 const menuItems = [
-  { title: "Dashboard", url: "/admin/dashboard-ekzekutiv", icon: Home },
+  { title: "Dashboard", url: "/admin/dashboard", icon: Home },
   { title: "Aplikimet", url: "/admin/aplikimet", icon: FileText },
 ];
 

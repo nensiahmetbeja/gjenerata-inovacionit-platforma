@@ -504,7 +504,7 @@ export const InnovationWorkspace = ({ onSubmissionSuccess }: InnovationWorkspace
               name="prototip_url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base font-medium">URL Prezantimi/Prototipi (opsionale)</FormLabel>
+                  <FormLabel className="text-base font-medium">URL prezantimi/prototipi (opsionale)</FormLabel>
                   <FormControl>
                     <Input 
                       placeholder="https://... (lidhje drejt prezantimit, video, prototip)" 
@@ -518,7 +518,7 @@ export const InnovationWorkspace = ({ onSubmissionSuccess }: InnovationWorkspace
             />
 
             <div className="space-y-4">
-              <h4 className="text-base font-medium">Ngarkim Dokumentesh (opsionale)</h4>
+              <h4 className="text-base font-medium">Ngarkim Dokumentesh</h4>
               <div className="border-2 border-dashed border-accent/30 rounded-xl p-8 bg-accent/5">
                 <div className="text-center">
                   <Upload className="mx-auto h-16 w-16 text-accent/60 mb-4" />
@@ -533,7 +533,7 @@ export const InnovationWorkspace = ({ onSubmissionSuccess }: InnovationWorkspace
                     variant="outline"
                     size="lg"
                     onClick={() => document.getElementById('file-upload')?.click()}
-                    className="btn-institutional"
+                    className="btn-institutional text-black"
                   >
                     <Upload className="h-4 w-4 mr-2" />
                     Zgjidhni dokumentet
