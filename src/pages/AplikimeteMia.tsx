@@ -195,10 +195,10 @@ const AplikimeteMia = () => {
               Këtu mund të shikoni të gjitha aplikimet që keni dorëzuar
             </p>
           </div>
-              <Button onClick={() => navigate('/')} className="gap-2">
-                <Plus className="h-4 w-4" />
-                Aplikim i Ri
-              </Button>
+          <Button onClick={() => navigate('/')} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Aplikim i Ri
+          </Button>
         </div>
 
         {applications.length === 0 ? (

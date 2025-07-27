@@ -101,55 +101,28 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-primary text-primary-foreground sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <h1 className="text-xl text-primary-foreground/80 font-bold">        
-                <a href="/">Gjenerata e Inovacionit</a>
-              </h1>
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl text-primary-foreground/80 font-bold">        
+            <a href="/">
+            Gjenerata e Inovacionit</a></h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:flex flex-col text-right">
+              <span className="text-sm font-medium">
+                {user.user_metadata?.emri} {user.user_metadata?.mbiemri}
+              </span>
+              <span className="text-xs text-primary-foreground/80">Aplikant</span>
             </div>
-            
-            {/* Navigation */}
-            <nav className="hidden md:flex items-center gap-6">
-              <a 
-                href="/aplikimet" 
-                className="text-primary-foreground/80 hover:text-primary-foreground transition-colors font-medium"
-              >
-                Aplikimet e meparshme
-              </a>
-            </nav>
-
-            {/* User Info & Actions */}
-            <div className="flex items-center gap-4">
-              <div className="hidden sm:flex flex-col text-right">
-                <span className="text-sm font-medium">
-                  {user.user_metadata?.emri} {user.user_metadata?.mbiemri}
-                </span>
-                <span className="text-xs text-primary-foreground/80">Aplikant</span>
-              </div>
-              
-              {/* Mobile Navigation Menu */}
-              <div className="md:hidden">
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => navigate('/aplikimet')}
-                  className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10"
-                >
-                  Aplikimet
-                </Button>
-              </div>
-              
-              <Button 
-                onClick={signOut} 
-                variant="secondary" 
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                <LogOut className="h-4 w-4" />
-                <span className="hidden sm:inline">Dil</span>
-              </Button>
-            </div>
+            <Button 
+              onClick={signOut} 
+              variant="secondary" 
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="hidden sm:inline">Dil</span>
+            </Button>
           </div>
         </div>
       </header>
