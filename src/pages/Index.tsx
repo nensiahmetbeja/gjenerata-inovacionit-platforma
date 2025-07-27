@@ -6,18 +6,61 @@ import { InnovationWorkspace } from '@/components/InnovationWorkspace';
 import { ResourcesSidebar } from '@/components/ResourcesSidebar';
 import { SubmissionSummary } from '@/components/SubmissionSummary';
 import { LogOut } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [roleLoading, setRoleLoading] = useState(true);
   const [submissionData, setSubmissionData] = useState(null);
   const [showSummary, setShowSummary] = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
-    }
-  }, [user, loading, navigate]);
+    const checkUserRoleAndRedirect = async () => {
+      if (!loading && !user) {
+        navigate('/auth');
+        return;
+      }
+
+      if (user && !userRole) {
+        try {
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+
+          if (error) {
+            console.error('Error fetching user profile:', error);
+            setRoleLoading(false);
+            return;
+          }
+
+          setUserRole(profile?.role);
+
+          // Redirect admin users to their appropriate dashboards
+          if (profile?.role === 'ekzekutiv') {
+            navigate('/admin/dashboard-ekzekutiv');
+            return;
+          } else if (profile?.role === 'ekspert') {
+            navigate('/admin/aplikimet');
+            return;
+          } else if (profile?.role === 'admin') {
+            navigate('/admin/dashboard');
+            return;
+          }
+          // If role is 'user' or null, allow access to this page
+        } catch (error) {
+          console.error('Error checking user role:', error);
+        } finally {
+          setRoleLoading(false);
+        }
+      }
+    };
+
+    checkUserRoleAndRedirect();
+  }, [user, loading, navigate, userRole]);
 
   const handleSubmissionSuccess = (data: any) => {
     setSubmissionData(data);
@@ -36,7 +79,7 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (loading) {
+  if (loading || roleLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">

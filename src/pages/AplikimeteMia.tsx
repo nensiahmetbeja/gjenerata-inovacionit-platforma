@@ -40,21 +40,62 @@ const AplikimeteMia = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [roleLoading, setRoleLoading] = useState(true);
   const [applications, setApplications] = useState<Application[]>([]);
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
-      return;
-    }
+    const checkUserRoleAndRedirect = async () => {
+      if (!loading && !user) {
+        navigate('/auth');
+        return;
+      }
 
-    if (user) {
-      fetchUserApplications();
-    }
-  }, [user, loading, navigate]);
+      if (user && !userRole) {
+        try {
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+
+          if (error) {
+            console.error('Error fetching user profile:', error);
+            setRoleLoading(false);
+            return;
+          }
+
+          setUserRole(profile?.role);
+
+          // Redirect admin users to their appropriate dashboards
+          if (profile?.role === 'ekzekutiv') {
+            navigate('/admin/dashboard-ekzekutiv');
+            return;
+          } else if (profile?.role === 'ekspert') {
+            navigate('/admin/aplikimet');
+            return;
+          } else if (profile?.role === 'admin') {
+            navigate('/admin/dashboard');
+            return;
+          }
+          // If role is 'user' or null, allow access to this page
+        } catch (error) {
+          console.error('Error checking user role:', error);
+        } finally {
+          setRoleLoading(false);
+        }
+      }
+
+      if (user && (userRole === 'user' || userRole === null)) {
+        fetchUserApplications();
+      }
+    };
+
+    checkUserRoleAndRedirect();
+  }, [user, loading, navigate, userRole]);
 
   const fetchUserApplications = async () => {
     try {
@@ -115,7 +156,7 @@ const AplikimeteMia = () => {
     setIsDetailOpen(true);
   };
 
-  if (loading || isLoading) {
+  if (loading || roleLoading || isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
