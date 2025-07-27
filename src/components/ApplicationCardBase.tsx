@@ -73,6 +73,7 @@ export default function ApplicationCardBase({
   const [editingCommentContent, setEditingCommentContent] = useState('');
   const [selectedStatusProposal, setSelectedStatusProposal] = useState('');
   const [isSubmittingProposal, setIsSubmittingProposal] = useState(false);
+  const [acceptedProposalIds, setAcceptedProposalIds] = useState<string[]>([]);
 
   // Fetch status options
   useEffect(() => {
@@ -442,12 +443,14 @@ export default function ApplicationCardBase({
     setIsSubmittingProposal(true);
     try {
       const selectedStatus = statusOptions.find(s => s.id === selectedStatusProposal);
-      
+      // Ruajmë statusId në content në format të lexueshëm
+      const content = `Propozim për të kaluar në statusin: ${selectedStatus?.label} (status_id:${selectedStatusProposal})`;
+
       const { error } = await supabase
         .from('application_notes' as any)
         .insert({
           application_id: application.id,
-          content: `Propozim për të kaluar në statusin: ${selectedStatus?.label} (status_id:${selectedStatusProposal})`,
+          content,
           note_type: 'status_suggestion',
           role: commentPermissions.role,
           created_by: user?.id
@@ -471,33 +474,15 @@ export default function ApplicationCardBase({
       if (!fetchError && notesData) {
         const commentsWithProfiles = await Promise.all(
           notesData.map(async (note: any) => {
-            let noteWithProfile = { ...note, profiles: null, suggested_status: null };
-            
+            let noteWithProfile = { ...note, profiles: null };
             if (note.created_by) {
               const { data: profile } = await supabase
                 .from('profiles')
                 .select('emri, mbiemri')
                 .eq('id', note.created_by)
                 .single();
-              
               noteWithProfile.profiles = profile;
             }
-
-            if (note.note_type === 'status_suggestion' && note.content.includes('Propozim për të kaluar në statusin:')) {
-              const statusMatch = note.content.match(/status_id:(\w+)/);
-              if (statusMatch) {
-                const statusId = statusMatch[1];
-                const { data: status } = await supabase
-                  .from('status')
-                  .select('label')
-                  .eq('id', statusId)
-                  .single();
-                
-                noteWithProfile.suggested_status = status;
-                noteWithProfile.suggested_status_id = statusId;
-              }
-            }
-            
             return noteWithProfile;
           })
         );
@@ -515,12 +500,11 @@ export default function ApplicationCardBase({
     }
   };
 
-  const handleApproveStatusProposal = async (suggestedStatusId: string) => {
+  const handleApproveStatusProposal = async (suggestedStatusId: string, commentId: string) => {
     if (!canEditStatus) return;
-    
     try {
       await handleStatusChange(suggestedStatusId);
-      
+      setAcceptedProposalIds(prev => [...prev, commentId]);
       toast({
         title: "Propozimi u pranua",
         description: "Statusi u ndryshua sipas propozimit të ekspertit"
@@ -724,11 +708,6 @@ export default function ApplicationCardBase({
                       <Badge variant="outline" className="text-xs">
                         {comment.role}
                       </Badge>
-                      {comment.note_type === 'status_suggestion' && (
-                        <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">
-                          💡 Propozim Statusi
-                        </Badge>
-                      )}
                       <span className="text-xs text-muted-foreground ml-auto">
                         {new Date(comment.created_at).toLocaleDateString('sq-AL')} {new Date(comment.created_at).toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })}
                       </span>
@@ -785,21 +764,37 @@ export default function ApplicationCardBase({
                         {comment.note_type === 'status_suggestion' ? (
                           <div className="space-y-2">
                             <p className="text-sm font-medium text-orange-800">
-                              Propozim për Ndryshim Statusi nga Eksperti: {comment.suggested_status?.label}
+                              {comment.content.replace(/\s*\(status_id:[^)]+\)/, "")}
                             </p>
                             <p className="text-xs text-muted-foreground">
                               Dërguar më: {new Date(comment.created_at).toLocaleDateString('sq-AL')} në {new Date(comment.created_at).toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })}
                             </p>
-                            {canEditStatus && comment.suggested_status_id && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleApproveStatusProposal(comment.suggested_status_id!)}
-                                className="mt-2"
-                              >
-                                Prano
-                              </Button>
-                            )}
+                            {canEditStatus && (() => {
+                              const statusMatch = comment.content.match(/\(status_id:([^\)]+)\)/);
+                              const statusId = statusMatch ? statusMatch[1] : null;
+                              const isAccepted = acceptedProposalIds.includes(comment.id);
+                              const isCurrentStatus = statusId === application.status_id;
+                              if (!statusId) return null;
+                              return (isAccepted || isCurrentStatus) ? (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  disabled
+                                  className="mt-2"
+                                >
+                                  <Check className="h-4 w-4 text-green-600" />
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleApproveStatusProposal(statusId, comment.id)}
+                                  className="mt-2"
+                                >
+                                  <Check className="h-4 w-4" />
+                                </Button>
+                              );
+                            })()}
                           </div>
                         ) : (
                           <p className="text-sm leading-relaxed">{comment.content}</p>
