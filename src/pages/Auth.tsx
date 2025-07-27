@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 const loginSchema = z.object({
   email: z.string().email('Ju lutem vendosni një email të vlefshëm'),
@@ -51,9 +52,42 @@ export default function Auth() {
   });
 
   useEffect(() => {
-    if (user) {
-      navigate('/');
-    }
+    const checkUserAndRedirect = async () => {
+      if (user) {
+        try {
+          // Get user role from profiles table
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+
+          if (error) {
+            console.error('Error fetching user profile:', error);
+            // If we can't get the profile, redirect to default page
+            navigate('/');
+            return;
+          }
+
+          // Redirect based on role
+          if (profile?.role === 'ekzekutiv') {
+            navigate('/admin/dashboard-ekzekutiv');
+          } else if (profile?.role === 'ekspert') {
+            navigate('/admin/aplikimet');
+          } else if (profile?.role === 'admin') {
+            navigate('/admin/dashboard');
+          } else {
+            // Regular user
+            navigate('/');
+          }
+        } catch (error) {
+          console.error('Error checking user role:', error);
+          navigate('/');
+        }
+      }
+    };
+
+    checkUserAndRedirect();
   }, [user, navigate]);
 
   const onLoginSubmit = async (data: LoginForm) => {
@@ -73,7 +107,7 @@ export default function Auth() {
           title: "Mirëseardhje!",
           description: "Keni hyrë me sukses",
         });
-        navigate('/');
+        // Don't navigate here - let the useEffect handle role-based redirect
       }
     } catch (error) {
       toast({
@@ -109,7 +143,7 @@ export default function Auth() {
           title: "Regjistrimi u krye me sukses!",
           description: "Mund të hyni tani në aplikacion",
         });
-        navigate('/');
+        // Don't navigate here - let the useEffect handle role-based redirect
       }
     } catch (error) {
       toast({
@@ -121,6 +155,18 @@ export default function Auth() {
       setIsLoading(false);
     }
   };
+
+  // Show loading while checking authentication status
+  if (user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-muted-foreground">Duke ridrejtuar...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
