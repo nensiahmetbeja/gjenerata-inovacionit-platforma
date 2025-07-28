@@ -103,6 +103,7 @@
 - `SubmissionSummary`: Përmbledhje e dorëzimit
 
 ### Filtrime
+- `FilterDropdown`: Layout i ripërdorshëm për filtrime
 - `StatusDropdown`, `FushaDropdown`, `BashkiaDropdown`, `GrupMoshaDropdown`
 
 ---
